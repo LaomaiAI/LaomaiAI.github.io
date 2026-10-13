@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Skill：多 Agent 团队决策 | AI包工头老麦</title>
-<style>body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.8;color:#1a1a1a}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:17px}a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}blockquote{border-left:3px solid #e5e5e5;margin:16px 0;padding-left:12px;color:#555}.tag{color:#666;font-size:14px}</style></head>
-<body><p class="tag"><a href="../index.html">← 回首页</a></p>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.8;color:#1a1a1a}h1{font-size:26px}h2{font-size:20px;margin-top:32px;border-left:4px solid #f5b301;padding-left:12px}h3{font-size:17px}a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}blockquote{border-left:3px solid #e5e5e5;margin:16px 0;padding-left:12px;color:#555}.tag{color:#666;font-size:14px}table{border-collapse:collapse;width:100%;font-size:15px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#fffbe6}.card{border:1px solid #eee;border-radius:14px;padding:18px;margin:16px 0}.card.go{border-color:#22c55e;background:#f0fdf4}.card.nogo{border-color:#f97316;background:#fff7ed}.cta{border:2px solid #f5b301;border-radius:14px;padding:18px;background:#fffbe6}</style></head>
+<body><p class="tag"><a href="../index.html">← 回首页</a> · <a href="https://x.com/LaomaiAI">X @LaomaiAI</a> · <a href="../articles/03-multi-agent-burn.html">长文：别再堆 Agent 了 →</a></p>
 <h1>Skill：多 Agent 团队决策（上团队前 5 步）</h1>
 <p class="tag">来源：03《多 Agent 团队决策教程》+ Vals AI《Do Agent Teams Pay Off?》(2026-10-09)、The Decoder 引用的 Anthropic 内部数据。结论供参考，Vals AI 每组配置仅运行一次。</p>
-<p>直接把下面的提示词丢给你的 Agent，即可使用这个 Skill。</p>
+<p>直接把下面的提示词丢给你的 Agent，即可使用这个 Skill。先过检查表，再看两个完整示例，最后按失败回退模板写验收标准。</p>
 <h2>什么时候用这个 Skill</h2>
 <p>手头有个任务，犹豫“单 Agent 干，还是上 Agent 团队”时用。目标：5 分钟出结论，不烧冤枉钱。</p>
 <h2>核心原则</h2>
@@ -14,7 +14,61 @@
 <li>团队买的是<strong>速度</strong>，不是<strong>质量</strong>。</li>
 <li>团队成本是单 Agent 的 1.8–5.1 倍（Vals AI 实测口径）。</li>
 </ul>
-<h2>操作清单（照着做）</h2>
+
+<h2>一、决策清单（可打印检查表）</h2>
+<p>6 项全部打勾，才考虑上团队。有一项打不上，就单 Agent 干。</p>
+<table>
+<tr><th>□</th><th>检查项</th><th>怎么判</th></tr>
+<tr><td>☐</td><td>单个 Agent 推理力度已拉满</td><td>已跑“默认 + 拉满”两轮对比，拉满仍不够用</td></tr>
+<tr><td>☐</td><td>任务能拆成可独立验收的块</td><td>每块能写出一句话验收标准，写不出来 = 拆不了</td></tr>
+<tr><td>☐</td><td>缺的是时间，不是质量</td><td>缺质量 → 别加人；缺时间 → 可考虑加人换速度</td></tr>
+<tr><td>☐</td><td>算过账</td><td>1.8–5.1 倍成本换速度，值吗？只有“今晚就要交货”才值得</td></tr>
+<tr><td>☐</td><td>Lead 验收标准已写清</td><td>每个 subagent 的输入、输出、验收标准 + 合并 + 冲突处理 + 回退</td></tr>
+<tr><td>☐</td><td>失败回退已定</td><td>哪个环节失败、整体怎么回退、谁兜底，已写在下面模板里</td></tr>
+</table>
+
+<h2>二、完整示例 1：上团队（今晚必须交货）</h2>
+<div class="card go">
+<h3>任务：今晚 22:00 前，抓取 5 个竞品官网的价格页，汇总成一张对比表</h3>
+<p><strong>决策：上团队。</strong>理由：5 个站点互相独立，可并行；缺的是时间（今晚就要），不是质量；单个 Agent 逐个抓要 2 小时，团队并行 30 分钟能完。</p>
+<p><strong>分工与验收标准（填好的）：</strong></p>
+<ul>
+<li><strong>Lead：</strong>输入 = 5 个 URL + 表头模板；输出 = 一张对比表（5 行 × 表头列）+ 异常清单；验收 = 5 行齐全、价格与截图一致、异常标注来源。</li>
+<li><strong>Subagent A/B/C/D/E（各 1 个站点）：</strong>输入 = 1 个 URL + 抓取字段（价格、套餐名、更新时间）；输出 = 该站 1 行数据 + 页面截图；验收 = 价格数字与截图一致、更新时间注明、抓不到时返回“未找到 + 截图”而不是编一个数。</li>
+<li><strong>合并规则：</strong>Lead 按表头模板合并，价格单位统一为人民币/月，缺失项填“未找到”并标红，不补默认值。</li>
+<li><strong>冲突处理：</strong>同一站点两个来源价格不一致时，以官网截图为准，另一来源记入异常清单。</li>
+<li><strong>失败回退：</strong>任一 subagent 超时 5 分钟，Lead 先用已回的 4 行出表，第 5 行标“待补”，不阻塞交付；全部超时则回退为单 Agent 逐个抓，告知用户延迟 1 小时。</li>
+</ul>
+<p><strong>成本账：</strong>单 Agent 约 1.22 美元，团队约 3.07 美元（2.5 倍），换今晚准时交货，值。（以 Vals 实测口径为例，非本任务实测。）</p>
+</div>
+
+<h2>三、完整示例 2：不上团队（前后耦合严重）</h2>
+<div class="card nogo">
+<h3>任务：写一个完整的待办事项 Web 应用（前端 + 后端 + 登录 + 部署）</h3>
+<p><strong>决策：不上团队。</strong>理由：前后耦合严重，拆不开；缺的是质量（要跑通），不是时间；单个 Agent 拉满推理力度已能跑通初版。</p>
+<p><strong>为什么拆不了（验收标准写不出来）：</strong></p>
+<ul>
+<li>前端依赖后端接口形状，后端依赖数据模型，接口一改，前后都得返工——子任务无法“独立验收”。</li>
+<li>试图写验收标准时发现：前端的验收是“页面能增删改查”，前提是后端已就绪；后端的验收是“接口返回正确”，前提是数据模型已定。互相等对方先定，拆不开。</li>
+<li>硬拆的结果：Lead 花一半时间在对齐接口、传话、返工，成本 1.8–5.1 倍，质量反而下降（Vals 实测：推理拉满后团队全都没提升）。</li>
+</ul>
+<p><strong>正确做法：</strong>单 Agent 拉满推理力度，一口气写完初版，跑通后再拆“修 Bug / 加功能”这种可独立验收的小块。</p>
+<p><strong>成本账：</strong>不上团队省 1.8–5.1 倍成本，质量更高。</p>
+</div>
+
+<h2>四、失败回退模板（复制后填空）</h2>
+<pre><code>
+任务：[填入任务]
+Lead：[谁负责合并]
+合并规则：[按什么模板合并，单位/格式怎么统一，缺失项填什么]
+冲突处理：[两个来源不一致时，以哪个为准，另一个记到哪里]
+超时规则：[单个 subagent 超时 X 分钟，Lead 怎么处理：先出部分结果 / 等 / 重试]
+回退条件：[什么情况下放弃团队模式，回退为单 Agent]
+回退动作：[回退后怎么做，谁告知用户，延迟多久]
+兜底：[最坏情况下交付什么：部分结果 + 异常清单，不编数]
+</code></pre>
+
+<h2>五、操作清单（照着做）</h2>
 <h3>第 1 步：拉满单个 Agent</h3>
 <ol><li>用单个 Agent 跑一遍当前任务，记录质量分 / 是否可用；</li><li>把 reasoning effort 调到最大，再跑一遍，对比；</li><li>如果调高已经够用，停，不要上团队。</li></ol>
 <h3>第 2 步：判断能不能干净切分</h3>
@@ -23,9 +77,10 @@
 <ul><li>缺质量 → 别加人；</li><li>缺时间 → 可以考虑加人，用成本换速度。</li></ul>
 <h3>第 4 步：算账</h3>
 <ul><li>问：“1.8–5.1 倍成本换来的速度提升，值吗？今晚必须交货，还是明天交也行？”</li><li>只有“今晚就要交货”时，才值得花 2.5 倍成本换速度。</li></ul>
-<h3>第 5 步：写清 Lead 验收标准</h3>
+<h3>第 5 步：写清 Lead 验收标准 + 失败回退</h3>
 <ul><li>每个 subagent 的输入、输出、验收标准；</li><li>Lead 怎么验收、怎么合并、怎么处理冲突；</li><li>哪个环节失败，整体怎么回退。</li><li>没写验收标准 = 小工瞎干。写不出来，就不上。</li></ul>
-<h2>提示词（可复制）</h2>
+
+<h2>六、提示词（可复制）</h2>
 <pre><code>你在帮我决策：这个任务该单 Agent 干，还是上多 Agent 团队？
 
 任务描述：[填入任务]
@@ -37,8 +92,15 @@
 2. 任务能否拆成“可独立验收”的块？每块写一句话验收标准，写不出来就判为拆不了。
 3. 我缺的是质量还是时间？
 4. 算账：1.8–5.1 倍成本换速度，值吗？
-5. 如果上团队，写清 Lead 的验收标准。
+5. 如果上团队，写清 Lead 的验收标准 + 失败回退模板（合并、冲突、超时、回退）。
 
-最后给一句话结论：上 / 不上 + 理由。</code></pre>
-<p class="tag">长文：<a href="../articles/03-multi-agent-burn.html">03 · 别再堆 Agent 了：多 Agent 烧钱实测</a></p>
+最后给一句话结论：上 / 不上 + 理由。
+</code></pre>
+
+<div class="cta">
+<h3>📖 长文 + 视频</h3>
+<p>长文：<a href="../articles/03-multi-agent-burn.html">别再堆 Agent 了：多 Agent 烧钱实测 →</a></p>
+<p>关注 X：<a href="https://x.com/LaomaiAI">@LaomaiAI</a></p>
+<p class="tag">AI包工头老麦，分享实操干货包你满意。</p>
+</div>
 </body></html>
