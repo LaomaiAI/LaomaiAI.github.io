@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skill：多 Agent 团队决策 | AI包工头老麦</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.8;color:#1a1a1a}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:17px}a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}blockquote{border-left:3px solid #e5e5e5;margin:16px 0;padding-left:12px;color:#555}.tag{color:#666;font-size:14px}</style></head>
+<body><p class="tag"><a href="../index.html">← 回首页</a></p>
+<h1>Skill：多 Agent 团队决策（上团队前 5 步）</h1>
+<p class="tag">来源：03《多 Agent 团队决策教程》+ Vals AI《Do Agent Teams Pay Off?》(2026-10-09)、The Decoder 引用的 Anthropic 内部数据。结论供参考，Vals AI 每组配置仅运行一次。</p>
+<p>直接把下面的提示词丢给你的 Agent，即可使用这个 Skill。</p>
+<h2>什么时候用这个 Skill</h2>
+<p>手头有个任务，犹豫“单 Agent 干，还是上 Agent 团队”时用。目标：5 分钟出结论，不烧冤枉钱。</p>
+<h2>核心原则</h2>
+<ul>
+<li>大多数场景，不要上多 Agent 团队。（“大多数”为作者判断，非实测数字。）先把单个 Agent 用到极致。</li>
+<li>团队买的是<strong>速度</strong>，不是<strong>质量</strong>。</li>
+<li>团队成本是单 Agent 的 1.8–5.1 倍（Vals AI 实测口径）。</li>
+</ul>
+<h2>操作清单（照着做）</h2>
+<h3>第 1 步：拉满单个 Agent</h3>
+<ol><li>用单个 Agent 跑一遍当前任务，记录质量分 / 是否可用；</li><li>把 reasoning effort 调到最大，再跑一遍，对比；</li><li>如果调高已经够用，停，不要上团队。</li></ol>
+<h3>第 2 步：判断能不能干净切分</h3>
+<ul><li>能拆的标准：每个子任务能<strong>独立验收</strong>。</li><li>能拆的例子：“同时抓 5 个网站的数据”；</li><li>不能拆的例子：“写一个完整的应用”（前后耦合严重）。</li><li>给每块写一句话验收标准。写不出来，就说明拆不了。</li></ul>
+<h3>第 3 步：问缺什么</h3>
+<ul><li>缺质量 → 别加人；</li><li>缺时间 → 可以考虑加人，用成本换速度。</li></ul>
+<h3>第 4 步：算账</h3>
+<ul><li>问：“1.8–5.1 倍成本换来的速度提升，值吗？今晚必须交货，还是明天交也行？”</li><li>只有“今晚就要交货”时，才值得花 2.5 倍成本换速度。</li></ul>
+<h3>第 5 步：写清 Lead 验收标准</h3>
+<ul><li>每个 subagent 的输入、输出、验收标准；</li><li>Lead 怎么验收、怎么合并、怎么处理冲突；</li><li>哪个环节失败，整体怎么回退。</li><li>没写验收标准 = 小工瞎干。写不出来，就不上。</li></ul>
+<h2>提示词（可复制）</h2>
+<pre><code>你在帮我决策：这个任务该单 Agent 干，还是上多 Agent 团队？
+
+任务描述：[填入任务]
+当前单个 Agent 表现：[填入质量分/是否可用]
+推理力度是否已拉满：[是/否]
+
+请按下面 5 步输出结论，不要直接给“上团队”：
+1. 单个 Agent 拉满后是否够用？
+2. 任务能否拆成“可独立验收”的块？每块写一句话验收标准，写不出来就判为拆不了。
+3. 我缺的是质量还是时间？
+4. 算账：1.8–5.1 倍成本换速度，值吗？
+5. 如果上团队，写清 Lead 的验收标准。
+
+最后给一句话结论：上 / 不上 + 理由。</code></pre>
+<p class="tag">长文：<a href="../articles/03-multi-agent-burn.html">03 · 别再堆 Agent 了：多 Agent 烧钱实测</a></p>
+</body></html>
