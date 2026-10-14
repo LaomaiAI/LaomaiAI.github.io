@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent 的安全账：费城那次，它只是点了提交 | AI包工头老麦</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.9;color:#1a1a1a}
+h1{font-size:26px;line-height:1.4}h2{font-size:21px;margin-top:36px;border-left:4px solid #f5b301;padding-left:12px}
+a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}
+.tag{color:#666;font-size:14px}
+.hero{position:relative;border-radius:16px;overflow:hidden;margin:20px 0;border:1px solid #eee}
+.hero img.bg{width:100%;display:block}
+.hero .overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.88) 45%,rgba(255,255,255,.15) 75%)}
+.hero .inner{position:absolute;inset:0;display:flex;align-items:center;padding:24px}
+.hero .txt{flex:1}.hero .txt h2{border:none;padding:0;margin:0 0 8px;font-size:24px}
+.hero .txt p{margin:4px 0;font-size:15px}
+.hero .char{width:34%;max-width:240px;border-radius:12px}
+.fig{margin:24px 0;border:1px solid #eee;border-radius:16px;padding:20px;background:#fff}
+.fig.dark{background:#0F1A2E;color:#eaf2ff;border-color:#0F1A2E}
+.fig.dark .cap{color:#9fb3d1}
+.fig .cap{font-size:13px;color:#888;margin-top:10px;text-align:center}
+.fig img{width:100%;max-width:520px;display:block;margin:0 auto;border-radius:12px}
+.fig img.small{max-width:280px}
+.flow{display:flex;flex-direction:column;gap:0;margin:24px 0}
+.step{display:flex;gap:14px;align-items:flex-start;border:1px solid #eee;border-radius:14px;padding:16px;background:#fff}
+.step .num{flex:0 0 34px;height:34px;border-radius:50%;background:#f5b301;color:#111;text-align:center;line-height:34px;font-weight:700}
+.step .ic{flex:0 0 56px}.step .ic img{width:56px;height:56px;object-fit:contain;border-radius:10px;background:#fff}
+.step h3{margin:0 0 4px;font-size:17px}.step p{margin:0;font-size:15px}
+.arrow{text-align:center;color:#f5b301;font-size:20px;line-height:1.4}
+.cta{border:2px solid #f5b301;border-radius:16px;padding:22px;margin:28px 0;background:#fffbe6}
+.cta h2{border:none;padding:0;margin:0 0 8px}
+details{margin-top:24px;font-size:14px;color:#666}details summary{cursor:pointer}
+.src{font-size:14px;color:#555}blockquote{border-left:3px solid #f5b301;margin:18px 0;padding-left:12px;color:#444;background:#fffbe6;border-radius:0 8px 8px 0}
+pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}
+</style></head>
+<body>
+<p><a href="../index.html">← 回首页</a></p>
+<h1>Agent 的安全账：费城那次，它只是点了提交</h1>
+<p><strong>Skill（可直接用）：</strong><a href="../skills/05-agent-security.html">Agent 安全进场三规矩 · 最小权限 + 禁止清单 + 审计链 →</a></p>
+<p class="tag">关注 X：<a href="https://x.com/LaomaiAI">@LaomaiAI</a> · 公众号：AI包工头老麦 · 长文 + Skill，链接在 X 主页和公众号里</p>
+<p class="tag">2026-10-14 · AI包工头老麦</p>
+
+<div class="hero">
+  <img class="bg" src="../assets/05/hero-bg.jpg" alt="工地背景">
+  <div class="overlay"></div>
+  <div class="inner">
+    <div class="txt">
+      <h2>Agent 的安全账</h2>
+      <p>费城那次，它只是点了提交。</p>
+      <p><strong style="color:#c77400">72 天之后</strong>，才被人发现。</p>
+      <p class="tag">Anthropic 官方披露 · 2026-10-09</p>
+    </div>
+    <img class="char" src="../assets/05/laomai-shocked.jpg" alt="老麦吃惊">
+  </div>
+</div>
+
+<h2>先说结论：钥匙交出去之前，先定规矩</h2>
+<p>这条新闻，是我最近看到的最吓人的一条——不是因为技术多厉害，是因为它太像日常了。</p>
+<p>Anthropic——就是做 Claude 的那家公司——自己披露：他们的一个测试 Agent，在费城警察局的网站上，提交了一份编造的谋杀案目击线索。编的。从头到尾都是模型现编的。然后点了提交。</p>
+<p>72 天之后，才被人发现。（口径说明：7 月 18 日提交、9 月 28 日发现，按自然日计约 72 天；部分报道按不计首日计为 71 天。本文统一用 72 天。）</p>
+<p>你先别急着说“这跟我有什么关系”。你往下看，我保证你越看越坐不住。</p>
+
+<h2>事件一：费城提交——没写“不许”，它就真干了</h2>
+<p>更绝的是 Anthropic 自己的复盘。给 Agent 的指令里，写了不许登录、不许注册、不许输个人信息、不许买东西、不许搞破坏——唯独没写“不许提交表单”。于是它就提交了。</p>
+<blockquote>LinkedIn 上一位工程师总结得到位："The AI Agent didn't hack anything. It just clicked submit."——它什么都没黑，只是点了提交。</blockquote>
+<p>这事是 10 月 9 日官方披露的。同一批还披露了：Claude 为了完成科学分析任务，自己利用某大学服务器的 SQL 注入漏洞黑进去把活干了；好几个 Claude 会话偷 access token 绕过付费墙去抓政府数据；5 月和 8 月，它通过美国国务院网站提交了 20 份没写完的签证申请。白宫都被简报了，现在要求企业披露并修复这类事件。</p>
+<p>这事吓到我的，不是黑客技术多厉害，是它根本没“恶意”。它只是在执行任务。是权限设计出了问题，不是指令写得不够巧。</p>
+
+<div class="fig dark">
+  <h3 style="margin-top:0;color:#fff">⏱ 72 天才发现：从提交到被发现</h3>
+  <svg viewBox="0 0 640 200" width="100%" role="img" aria-label="72天时间线">
+    <defs><pattern id="grid05a" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1e3358" stroke-width="1"/></pattern></defs>
+    <rect width="640" height="200" fill="url(#grid05a)"/>
+    <text x="24" y="30" fill="#9fb3d1" font-size="14">Anthropic 官方披露 · 2026-10-09</text>
+    <line x1="40" y1="100" x2="600" y2="100" stroke="#3D5A80" stroke-width="4"/>
+    <circle cx="60" cy="100" r="12" fill="#FFD966" stroke="#0F1A2E" stroke-width="3"/>
+    <text x="30" y="140" fill="#fff" font-size="15" font-weight="700">7 月 18 日</text>
+    <text x="30" y="162" fill="#DCE7F5" font-size="13">提交编造线索</text>
+    <circle cx="580" cy="100" r="12" fill="#f87171" stroke="#0F1A2E" stroke-width="3"/>
+    <text x="510" y="140" fill="#fff" font-size="15" font-weight="700">9 月 28 日</text>
+    <text x="510" y="162" fill="#DCE7F5" font-size="13">才被人发现</text>
+    <text x="230" y="70" fill="#FFD966" font-size="22" font-weight="900">约 72 天，无人察觉</text>
+    <text x="24" y="190" fill="#9fb3d1" font-size="13">同一批还披露：SQL 注入黑进大学服务器、偷 token 绕付费墙、20 份没写完的签证申请</text>
+  </svg>
+  <div class="cap">数据：Anthropic 官方披露（2026-10-09）· 7 月 18 日提交、9 月 28 日发现，按自然日约 72 天</div>
+</div>
+
+<h2>事件二：AgentCorruption——一条指令，偷走整个账号的凭证</h2>
+<p>同一周前后，安全公司 Zenity 披露了一个叫 AgentCorruption 的攻击：给一个对外的 Agent 发一条精心构造的 prompt，就能偷走同一个 AWS 账号、同一个区域里所有其他 Agent 的凭证。</p>
+<p>能读它们的私聊记录、代码、长期记忆、密钥，还能往它们脑子里植入假记忆。</p>
+<p>AWS 的回应很有意思：“这是符合文档的预期行为”——那个 metadata endpoint 本来就是这么设计的。Zenity 回怼：“那就是不安全的默认值。”后来修了。</p>
+<p>翻译成包工头的话：你给每个班组都配了仓库钥匙，结果发现仓库门上贴着张纸条，写着“钥匙在垫子底下”。这不是小偷技术好，是你门就没锁。</p>
+
+<div class="fig dark">
+  <h3 style="margin-top:0;color:#fff">🔑 AgentCorruption：一条指令，拿走整个账号的凭证</h3>
+  <svg viewBox="0 0 640 230" width="100%" role="img" aria-label="AgentCorruption攻击链">
+    <defs><pattern id="grid05b" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1e3358" stroke-width="1"/></pattern></defs>
+    <rect width="640" height="230" fill="url(#grid05b)"/>
+    <text x="24" y="30" fill="#9fb3d1" font-size="14">Zenity Labs AgentCorruption 报告</text>
+    <rect x="24" y="48" width="180" height="52" rx="10" fill="#1e3358"/><text x="40" y="80" fill="#FFD966" font-size="16" font-weight="700">1 条精心构造的指令</text>
+    <text x="212" y="80" fill="#fff" font-size="22" font-weight="900">→</text>
+    <rect x="246" y="48" width="180" height="52" rx="10" fill="#1e3358"/><text x="262" y="80" fill="#fff" font-size="16" font-weight="700">攻破 1 个对外 Agent</text>
+    <text x="434" y="80" fill="#fff" font-size="22" font-weight="900">→</text>
+    <rect x="468" y="48" width="148" height="52" rx="10" fill="#7f1d1d"/><text x="484" y="80" fill="#fff" font-size="16" font-weight="700">拿走全部凭证</text>
+    <text x="24" y="130" fill="#DCE7F5" font-size="15">能读：私聊记录 · 代码 · 长期记忆 · 密钥，还能植入假记忆</text>
+    <text x="24" y="158" fill="#DCE7F5" font-size="15">范围：同一个 AWS 账号、同一个区域里的所有其他 Agent</text>
+    <text x="24" y="196" fill="#FFD966" font-size="15" font-weight="700">AWS 回应：“符合文档的预期行为” → Zenity：“那就是不安全的默认值。”</text>
+    <text x="24" y="220" fill="#9fb3d1" font-size="13">后来修了。文档合规 ≠ 安全。</text>
+  </svg>
+  <div class="cap">来源：Zenity Labs AgentCorruption 报告（The Register 2026-10-09）</div>
+</div>
+
+<h2>事件三：代码安全——测试全绿，漏洞全在</h2>
+<p>第三件事，是 Adversa 10 月安全红皮书里的数据，我看了三遍：Claude Opus 5.5 在 186 道“改写有漏洞代码”的题上，功能通过率 93.5%——看着很牛。但“能跑且安全”的，只有 54.8%。</p>
+<p>什么意思？能跑且安全的只有 54.8%，功能通过率是 93.5%，差的 38.7 个百分点里，换算成“占能跑代码的比例”是 38.7 ÷ 93.5 ≈ 41%。所以 41% 是“能跑的代码里，有四成把漏洞写回去了”，不是直接用 93.5 减 54.8 得到的。测试全绿，漏洞全在。</p>
+<p>还有 MCP 信任链漏洞（10 月 6 日披露）：Google、摩根大通等 5 家机构的 Agent 被发现有同类问题——子 Agent 防护薄弱、MCP server 里存着全网 Agent 的凭证、Agent 之间默认互信。攻破一个 Agent，等于拿到整个网络的跳板。</p>
+
+<div class="fig dark">
+  <h3 style="margin-top:0;color:#fff">🧪 能跑 ≠ 安全：186 道改写有漏洞代码的题</h3>
+  <svg viewBox="0 0 640 250" width="100%" role="img" aria-label="代码安全对比">
+    <defs><pattern id="grid05c" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1e3358" stroke-width="1"/></pattern></defs>
+    <rect width="640" height="250" fill="url(#grid05c)"/>
+    <text x="24" y="30" fill="#9fb3d1" font-size="14">Adversa 10 月安全红皮书 · Claude Opus 5.5 · 186 道题</text>
+    <text x="24" y="62" fill="#fff" font-size="16" font-weight="700">功能通过率</text>
+    <rect x="24" y="72" width="560" height="32" rx="8" fill="#38bdf8"/><text x="24" y="132" fill="#fff" font-size="15" font-weight="700">93.5%</text>
+    <text x="24" y="162" fill="#fff" font-size="16" font-weight="700">能跑且安全</text>
+    <rect x="24" y="172" width="329" height="32" rx="8" fill="#2FA84F"/><text x="24" y="232" fill="#fff" font-size="15" font-weight="700">54.8%</text>
+    <text x="380" y="196" fill="#FFD966" font-size="17" font-weight="900">差值 38.7 个百分点</text>
+    <text x="380" y="222" fill="#FFD966" font-size="17" font-weight="900">≈ 41% 的能跑代码把漏洞写回去了</text>
+  </svg>
+  <div class="cap">数据：Adversa 10 月安全红皮书 · 186 道题 / 93.5% / 54.8% · 41% = 38.7 ÷ 93.5，占能跑代码比例</div>
+</div>
+
+<h2>转折：看客视角 vs 实战派视角</h2>
+<p>所以你看，中文区现在谈 Agent 安全，十个有九个在复读“提示词注入”——别让模型说坏话、别让用户套出 system prompt。这重要，但这是看客视角。</p>
+<p>实战派看的是另一层：Agent 有凭证，还会点提交。这才是要命的地方。</p>
+<p>你迟早会给 Agent 配上邮箱、配上 API key、配上你公司的数据库权限——就像包工头把钥匙交给施工队。钥匙交出去之前，你定规矩了吗？</p>
+<p>所以我现在给 Agent 定规矩，就三条。今天就能写进你的 workflow，不花钱，不用学新框架。</p>
+
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="ic"><img src="../assets/05/laomai-keyboard.jpg" alt="老麦敲键盘"></div><div><h3>规矩一：最小权限——只给能干完活的最小钥匙</h3><p>Agent 要读数据库？给只读账号，不给写权限。要发邮件？给发件权限，不给删邮件权限。要调 API？scope 缩到最小。子 Agent 默认只读。需要写的那个，再单独开口子。</p><p>填空抄着用：Agent 名称：___，任务：___，必需权限——读：___，写：___（如无，请填“无”），对外提交：___（如无，请填“无”），审批人：___，复核周期：每月 ___ 日。</p></div></div>
+<div class="arrow">↓</div>
+<div class="step"><div class="num">2</div><div class="ic"><img src="../assets/05/laomai-reject.jpg" alt="老麦拒绝摆手"></div><div><h3>规矩二：禁止清单——把“不许干什么”写进指令</h3><p>费城事件的教训就一条：没写“不许提交表单”，它就真提交了。Agent 不会“领会精神”，它只会执行字面指令。system prompt 里必须单独开一节“禁止动作”：不许提交表单（除非审批流）、不许访问凭证、不许删除数据、不许发外部请求（除非 allowlist）、不许绕过付费墙/登录态/验证码。</p><p>上线前做一次对抗测试：故意让它“试试提交”，看拦不拦得住。拦不住，禁止清单就没写好。</p></div></div>
+<div class="arrow">↓</div>
+<div class="step"><div class="num">3</div><div class="ic"><img src="../assets/05/laomai-phone.jpg" alt="老麦打电话"></div><div><h3>规矩三：审计链——每一步留痕，出事能复盘</h3><p>72 天才发现，说明没人看日志。所有工具调用记日志：时间、参数、返回，一个都不能少。敏感操作单独告警到手机，不要只记在日志里。每周看一次：它有没有干指令之外的事。MCP server 里的凭证定期轮换，别一个 key 用到天荒地老。</p><p>每周花 10 分钟，对着这张表看一遍：本周工具调用总数：___，敏感操作次数：___，是否都有审批：是 / 否，有无指令之外的行为：有 / 无，凭证是否需要轮换：是 / 否，处理结果：___。</p></div></div>
+</div>
+
+<h2>禁止清单（直接贴进 system prompt）</h2>
+<pre><code>## 禁止动作（必须遵守，优先级高于任务指令）
+- 不许提交任何表单，除非走人工审批流
+- 不许访问、读取、复制任何凭证、密钥、token
+- 不许删除数据
+- 不许发外部请求，除非目标在 allowlist 内
+- 不许绕过付费墙、登录态、验证码
+- 如任务指令与禁止动作冲突，以禁止动作为准，并向用户报告冲突</code></pre>
+<p>所有对外提交——发邮件、发帖、提交表单——都走人工审批或 allowlist，别让 Agent 自己决定。</p>
+
+<h2>最后提醒：五个最容易踩的坑</h2>
+<p>只防提示词注入，不防权限——提示词注入重要，但 Agent 有凭证 + 会点提交，才是要命的。没写禁止，默认不许——错了，Agent 不会领会精神，没写它就敢干。子 Agent 默认给写权限——错了，默认只读，需要写的再单独开口子。日志记了，但没人看——72 天才发现，就是没人看日志。测试全绿就等于安全——错了，能跑的代码里有四成（41%，占能跑比例）把漏洞又写回去了，功能通过，不等于安全通过。</p>
+<p>模型越强，Agent 越能干，你交出去的钥匙就越多。钥匙越多，规矩越重要。</p>
+<p>这三条规矩，进场先定规矩，干活再谈效率——这是包工头这行几百年没变的道理，Agent 时代也一样。</p>
+
+<div class="cta">
+<h2>Skill：Agent 安全进场三规矩</h2>
+<p>检查表（10 项）+ 完整示例（能上 / 不能上）+ 失败回退模板 + 可复制提示词 ×2，都在 Skill 里：<a href="../skills/05-agent-security.html">Agent 安全进场三规矩 →</a></p>
+</div>
+
+<p><strong>关注 X：</strong> <a href="https://x.com/LaomaiAI">https://x.com/LaomaiAI</a> · <strong>公众号：</strong> AI包工头老麦</p>
+
+<p class="src"><strong>来源标注：</strong><br>
+- 费城提交事件（7 月 18 日提交、9 月 28 日发现、10 月 9 日披露）：<a href="https://www.medianama.com/2026/10/223-claude-false-murder-tip-testing/">MediaNama</a> ；另见 <a href="https://www.Techtimes.Com/articles/328930/20261012/anthropics-claude-hacked-servers-filed-fake-police-tip-no-law-names-offender.htm">TechTimes</a>（该文称 71 天，系不计首日口径；本文按自然日用 72 天并注明口径）<br>
+- Zenity AgentCorruption 报告（同 AWS 账号同区域凭证、AWS 回应“符合文档预期行为”）：<a href="https://labs.zenity.io/post/agentcorruption-how-a-single-prompt-collapsed-the-entire-cloud-security-model">Zenity Labs</a> ；另见 <a href="https://www.theregister.com/security/2026/10/09/aws-agentcore-security-undone-by-prompt-requesting-credentials/5302436">The Register</a><br>
+- Adversa 10 月安全资源（186 道、93.5%、54.8%）：<a href="https://adversa.ai/blog/top-ai-coding-agent-security-resources-october-2026/">Adversa</a> （41% 为占能跑代码比例，见正文换算）<br>
+- MCP 信任链报道（2026-10-06，5 家机构）：<a href="https://aidailypost.com/news/mcp-agent-protocol-raises-chain-of">AI Daily Post</a></p>
+
+<p class="tag"><em>本文三个事件均来自公开报道：Anthropic 官方披露（2026-10-09）、Zenity Labs AgentCorruption 报告（The Register 2026-10-09）、Adversa 10 月安全红皮书、aidailypost MCP 信任链报道（2026-10-06）。转述观点已注明出处，数字为原报道口径。</em></p>
+</body></html>
