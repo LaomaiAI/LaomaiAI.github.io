@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>你不在电脑前，它还在干活：Gemini 任务模式怎么用 | AI包工头老麦</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.9;color:#1a1a1a}
+h1{font-size:26px;line-height:1.4}h2{font-size:21px;margin-top:36px;border-left:4px solid #f5b301;padding-left:12px}
+a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}
+.tag{color:#666;font-size:14px}
+.cta{border:2px solid #f5b301;border-radius:16px;padding:22px;margin:28px 0;background:#fffbe6}
+.cta h2{border:none;padding:0;margin:0 0 8px}
+.src{font-size:14px;color:#555}blockquote{border-left:3px solid #f5b301;margin:18px 0;padding-left:12px;color:#444;background:#fffbe6;border-radius:0 8px 8px 0}
+pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#fffbe6}
+</style></head>
+<body>
+<p><a href="../index.html">← 回首页</a></p>
+<h1>你不在电脑前，它还在干活：Gemini 任务模式怎么用</h1>
+<p class="tag">2026-10-15 · AI包工头老麦</p>
+<blockquote><strong>先说清楚，免得你白高兴：任务模式只限 Google AI Pro 与 Ultra 订阅者，免费用户用不了。</strong>下面讲的，都是在这个前提下的用法判断。来源：Google 官方博客《Gemini 4 Argon is now available in the Gemini app》（2026-10-13）[S1]。</blockquote>
+<p><strong>Skill（可直接用）：</strong><a href="../skills/09-gemini-tasks.html">Gemini 任务模式委托判断 · 交出去之前，先判能不能交 →</a></p>
+<p><strong>怎么读这篇：</strong>带 [S1] / [S2] 的是事实，有来源，来源表在文末；没带标记的，是作者的委托判断方法，不是官方说明，也不是实测。</p>
+<p><strong>配图说明：</strong>本篇未配任何界面截图。经核查，Google 官方博客文本版未返回可用配图 URL，按要求宁可少配图，不伪造界面图、不自己画假界面。如需配图，请直接使用 Google 官方博客原文中的配图并标注“图片来源：Google 官方博客”。官方博客原文：<a href="https://blog.google/innovation-and-ai/products/gemini-app/gemini-4-argon-availability/">Gemini 4 Argon is now available in the Gemini app</a>。</p>
+
+<h2>先说结论：它值钱的地方，是“你不在，它还在干活”</h2>
+<p>Gemini 4 Argon 进入 Gemini App 之后，主聊天窗口可一键从聊天切换到任务模式；选任务模式后，Gemini 可在用户不在电脑前时继续工作。[S1]</p>
+<p>说白了，任务模式值钱的不是“聊得更好”，而是“你不在，它还在干活”。</p>
+<p>你把一件事交出去，合上电脑去开会、去吃饭、去睡觉。回来的时候，活已经干完了，你只负责验结果、做决定。</p>
+<p>但这句话有个前提，很多人会漏掉——<strong>不是什么活都能这样交。</strong>边界不清的、结果不可逆的、代价大的，交出去就是给自己挖坑。</p>
+<p>所以这篇不讲“点哪里”，只讲一个判断：<strong>什么活能交出去，什么活必须你点头。</strong>判对了，任务模式是帮你省时间的帮手；判错了，它就是帮你闯祸的帮手。</p>
+
+<h2>它到底变了什么：从“聊天”到“任务”</h2>
+<p>官方博客给的事实，就这几条，多一条我都不编：</p>
+<ul>
+<li><strong>Gemini 4 Argon 进入 Gemini App。</strong>[S1]</li>
+<li><strong>主聊天窗口可一键从聊天切换到任务模式。</strong>[S1]——这说的是“有这个切换”，不是操作教程。本文不写分步操作。</li>
+<li><strong>选任务模式后，Gemini 可在用户不在电脑前时继续工作。</strong>[S1]——这是任务模式和普通聊天的根本区别。聊天是你问一句它答一句，你在场；任务模式是你交出去，它接着干，你不在场。</li>
+<li><strong>Gemini 连接 40+ 应用，官方博客列举 Instacart、OpenTable、Adobe、Shopify 等。</strong>[S1]——但“连接”不等于“在任务模式里都能替你办”。连了什么，和交什么出去，是两回事。</li>
+<li><strong>macOS App 内集成了 Antigravity 编程界面。</strong>[S1]——编程那部分不在这篇的讨论范围里，本文不展开。</li>
+<li><strong>可用范围是 Google AI Pro 与 Ultra 订阅者。</strong>[S1]——免费用户用不了，这就是开头的付费墙披露。</li>
+</ul>
+<p>看明白了吗？官方博客讲的是“能切换、能接着干、连了很多应用”。它没讲“交什么活最划算”，也没讲“交错了怎么办”。这正是这篇要补的：<strong>官方给的是能力，你要自己补判断。</strong></p>
+
+<h2>能交的活，长什么样：四问全过，才交</h2>
+<p>判断方法很简单，交出去之前问自己四句话。<strong>四问全过，才交；有一问过不了，就先拆小，或者先让人点头。</strong></p>
+<p><strong>能一句话说清要什么吗？</strong></p>
+<p>你让跑腿买东西，得说清买什么、多少钱封顶、买不到怎么办。说不清，跑腿就得替你猜。猜对了是运气，猜错了是你买单。</p>
+<p>交任务也一样。你得一句话说清“要什么、不要什么、做到什么程度算完”。说不清的活，交出去就是让它替你猜。</p>
+<p><strong>错了能撤回吗？</strong></p>
+<p>错了能改的叫试错，错了改不了的叫事故。整理错了，重整一遍就行；发错了、下错单了，收不回来。凡是错了撤不回的，别直接交。</p>
+<p><strong>回来能快速验吗？</strong></p>
+<p>你回来得能一眼看出对错，不用重做一遍才知道它做得对不对。验起来比自己做还费劲的活，交出去不省时间，只是把活从“做”变成了“查”，还查不明白。</p>
+<p><strong>它会对外发出、花钱吗？</strong></p>
+<p>对外发、对外下单、对外提交、对外发布——这些动作先留给人。Gemini 连了 40+ 应用 [S1]，不代表对外动作就可以不经过你。连了什么是一回事，交什么出去是另一回事。</p>
+<p>四问全过的活，长这样：<strong>整理、汇总、草稿、清单</strong>——把已有的东西理清楚，产出一份你回来能验的草稿。这是任务模式最稳的用法。</p>
+
+<h2>必须你点头的五种活：一律先停下</h2>
+<p>下面这五种，不管看起来多简单，<strong>都不直接交出去，必须你点头：</strong></p>
+<p><strong>对外发出的——</strong>发给别人看的东西，消息、邮件、公告、帖子。发出去就收不回来，发之前必须你看一眼。</p>
+<p><strong>花钱的——</strong>下单、订座、签约、付款，任何涉及花钱和对外承诺的动作。连了 Instacart、OpenTable 这类应用 [S1]，不等于花钱可以不经过你。</p>
+<p><strong>碰敏感信息的——</strong>隐私、密码、财务数据、内部未公开信息。边界不清时，默认不交。</p>
+<p><strong>你自己都说不清要什么的——</strong>一句话说不清“要什么、不要什么、什么算完”，就别交。先把要求想清楚，再交；想不清楚，交出去也是白交。</p>
+<p><strong>错了你兜不住的——</strong>结果错了，代价是钱、名誉、数据丢失、法律风险。这类活，结果必须你验，决定必须你做。</p>
+<p>记住一句话：<strong>你不在电脑前，不等于你不用负责。</strong>任务模式替你干活，不替你背锅。决定权在你手里，才叫委托；决定权交出去了，那叫甩锅。</p>
+
+<h2>价格那笔账：两笔钱，别混成一笔</h2>
+<p>价格最容易被写错，所以这里单独说清归属——<strong>价格来自 Google 开发者博客（2026-10-13）[S2]，不是来自上面那篇 App 博客。</strong>两篇博客，两笔账：</p>
+<blockquote>Google 开发者博客（2026-10-13）公布的 API introductory 价格：<strong>$2 / 百万输入 token、$10 / 百万输出 token；缓存输入 95% 折扣；11 月 30 日之后翻倍为 $4 / $20。</strong>[S2]</blockquote>
+<p><strong>这是 API 一侧的价格，不是 App 订阅的价格。</strong>不要把 $2 / $10 当成 Pro / Ultra 的订阅价。App 任务模式的可用范围是订阅（Pro / Ultra [S1]），API 价格是另一回事，两笔账分开算。</p>
+<p><strong>introductory 是有有效期的。</strong>11 月 30 日之后翻倍为 $4 / $20 [S2]。做预算、做决策，按翻倍后的口径留余量，别按 introductory 价算死了。</p>
+<p><strong>价格会变，以官方最新公布为准。</strong>本文只转述开发者博客（2026-10-13）公布的口径，不预测之后的价格。</p>
+
+<h2>交出去之前，30 秒，四问</h2>
+<p>把前面的判断压缩成四句话，交出去之前花 30 秒问一遍：</p>
+<ol>
+<li>我能一句话说清要什么吗？——说不清，先想清楚，再交。</li>
+<li>错了能撤回吗？——撤不回，先让人点头。</li>
+<li>回来能快速验吗？——验不了，等于没省时间。</li>
+<li>它会对外发出 / 花钱吗？——会，先让人点头。</li>
+</ol>
+<p>四个都过，可以交；任何一个不过，先拆小，或者先让人点头。拆小的意思是：把大任务切成“先出草稿、我验完再往下走”的小步，而不是一次交到底。</p>
+
+<h2>三个坑，别踩</h2>
+<p><strong>“连了 40+ 应用，什么都能办。”</strong>错。官方博客说的是 Gemini 连接 40+ 应用 [S1]。连接不等于替你办事，更不等于对外动作不用你点头。连了什么是一回事，交什么出去是另一回事。</p>
+<p><strong>“任务模式 = 不用管了。”</strong>错。任务模式是“你不在电脑前，它还在干活”，不是“你不用负责”。回来验结果、做决定，依然是你的活。交出去不管，叫甩锅，不叫委托。</p>
+<p><strong>“API 价格就是订阅价格。”</strong>错。$2 / $10 是开发者博客公布的 API introductory 价格 [S2]，App 任务模式的可用范围是 Pro / Ultra 订阅 [S1]。两篇博客，两笔账，别混成一笔。</p>
+
+<h2>最后一句</h2>
+<p>任务模式不是让你变懒的工具，是让你把时间花在“只有你能做决定”的地方的工具。</p>
+<p>整理、汇总、草稿——交出去。发出、花钱、担责——你点头。</p>
+<p>判对了，你不在电脑前，它还在干活；判错了，你不在电脑前，它还在闯祸。区别不在工具，在判断。</p>
+
+<div class="cta">
+<h2>Skill：Gemini 任务模式委托判断</h2>
+<p>四问决策表 + 检查表（8 项）+ 完整正反例（3 个）+ 冲突 / 超时 / 失败回退 + 可复制提示词 ×2 + 审核与沉淀，都在 Skill 里：<a href="../skills/09-gemini-tasks.html">Gemini 任务模式委托判断 →</a></p>
+</div>
+
+<p><strong>关注 X：</strong> <a href="https://x.com/LaomaiAI">https://x.com/LaomaiAI</a> · <strong>公众号：</strong> AI包工头老麦</p>
+
+<p class="src"><strong>来源表（每处事实的归属）：</strong></p>
+<table>
+<tr><th>编号</th><th>出处</th><th>发布日期</th><th>本文引用的内容</th><th>链接状态</th></tr>
+<tr><td>[S1]</td><td>Google 官方博客《Gemini 4 Argon is now available in the Gemini app》</td><td>2026-10-13</td><td>Gemini 4 Argon 进入 Gemini App；主聊天窗口可一键从聊天切换到任务模式；选任务模式后可在用户不在电脑前时继续工作；Gemini 连接 40+ 应用（Instacart、OpenTable、Adobe、Shopify 等）；macOS App 内集成 Antigravity 编程界面；可用范围为 Google AI Pro 与 Ultra 订阅者</td><td>已确认：<a href="https://blog.google/innovation-and-ai/products/gemini-app/gemini-4-argon-availability/">blog.google 官方博客</a></td></tr>
+<tr><td>[S2]</td><td>Google 开发者博客</td><td>2026-10-13</td><td>API introductory 价格：$2 / 百万输入 token、$10 / 百万输出 token；缓存输入 95% 折扣；11 月 30 日之后翻倍为 $4 / $20</td><td>未确认具体 URL，不编造链接</td></tr>
+</table>
+<p class="tag"><em>边界声明：本文未做实测：无 Gemini UI 分步操作、无“实测效果”、无模型跑分对比、无 API 接入教程、无 Antigravity 编程展开。文中未带 [S1] / [S2] 标记的，均为作者的委托判断方法，非官方说明。本文不重讲 04 / 05 的内容，重心是 Gemini 任务模式自身的委托判断。</em></p>
+</body></html>
