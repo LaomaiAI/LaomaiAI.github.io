@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>别再堆 Agent 了，先分清四件套：Skill / 子代理 / Hook / Workflow 到底谁拿计划 | AI包工头老麦</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.9;color:#1a1a1a}
+h1{font-size:26px;line-height:1.4}h2{font-size:21px;margin-top:36px;border-left:4px solid #f5b301;padding-left:12px}
+a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}
+.tag{color:#666;font-size:14px}
+.hero{position:relative;border-radius:16px;overflow:hidden;margin:20px 0;border:1px solid #eee;background:#fffbe6}
+.hero .inner{display:flex;align-items:center;padding:24px;gap:16px}
+.hero .txt{flex:1}.hero .txt h2{border:none;padding:0;margin:0 0 8px;font-size:24px}
+.hero .txt p{margin:4px 0;font-size:15px}
+.hero .char{width:34%;max-width:220px;border-radius:12px;background:#fff}
+.fig{margin:24px 0;border:1px solid #eee;border-radius:16px;padding:20px;background:#fff}
+.fig.dark{background:#0F1A2E;color:#eaf2ff;border-color:#0F1A2E}
+.fig.dark .cap{color:#9fb3d1}
+.fig .cap{font-size:13px;color:#888;margin-top:10px;text-align:center}
+.fig svg{width:100%;height:auto;display:block}
+.flow{display:flex;flex-direction:column;gap:0;margin:24px 0}
+.step{display:flex;gap:14px;align-items:flex-start;border:1px solid #eee;border-radius:14px;padding:16px;background:#fff}
+.step .num{flex:0 0 34px;height:34px;border-radius:50%;background:#f5b301;color:#111;text-align:center;line-height:34px;font-weight:700}
+.step h3{margin:0 0 4px;font-size:17px}.step p{margin:0;font-size:15px}
+.arrow{text-align:center;color:#f5b301;font-size:20px;line-height:1.4}
+.cta{border:2px solid #f5b301;border-radius:16px;padding:22px;margin:28px 0;background:#fffbe6}
+.cta h2{border:none;padding:0;margin:0 0 8px}
+pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap;font-size:14px}
+code{font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:15px}th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:top}th{background:#fffbe6}
+blockquote{border-left:3px solid #f5b301;margin:18px 0;padding-left:12px;color:#444;background:#fffbe6;border-radius:0 8px 8px 0}
+.src{font-size:14px;color:#555}
+.warn{border:1px solid #f97316;background:#fff7ed;border-radius:12px;padding:16px;margin:20px 0}
+</style></head>
+<body>
+<p><a href="../index.html">← 回首页</a></p>
+<h1>别再堆 Agent 了，先分清四件套：Skill / 子代理 / Hook / Workflow 到底谁拿计划</h1>
+<p><strong>Skill（可直接用）：</strong><a href="../skills/07-claude-code-primitives.html">Claude Code 四件套分工 Skill · 决策表 + 三份可复制模板 →</a></p>
+<p class="tag">关注 X：<a href="https://x.com/LaomaiAI">@LaomaiAI</a> · 公众号：AI包工头老麦 · 长文 + Skill，私信拿链接</p>
+<p class="tag">2026-10-14 · AI包工头老麦</p>
+
+<div class="hero">
+  <div class="inner">
+    <div class="txt">
+      <h2>先问一句：这事谁拿计划？</h2>
+      <p>答不上来，写再多提示词也是乱堆。</p>
+      <p>Skill 是方法，子代理是干活的人，Hook 是保证，Workflow 是脚本拿计划。</p>
+      <p class="tag">信息差：英文区已讲透“谁拿计划”，中文区还停留在“四种东西有什么区别”</p>
+    </div>
+    <img class="char" src="../assets/07/laomai-confident.png" alt="老麦自信讲解">
+  </div>
+</div>
+
+<h2>问题：两种堆法，都在烧钱烧上下文</h2>
+<p>常见两种典型的堆法。第一种，把所有要求往 CLAUDE.md 里塞：不许碰 .env、部署流程、代码规范、测试步骤，全塞进去。文件越来越长，每次请求都全量进上下文，钱照烧，第十次还是有人把密钥文件改了。</p>
+<p>第二种，什么事都上子代理：查个日志开三个 Agent，改两行代码也要拉个团队。窗口倒是干净了，账单和等待时间一起上去了。</p>
+<p>两种堆法的根因是同一个：没分清四个东西到底谁拿计划、谁保证执行、成本落在哪。分清了，选型就是一道送分题。</p>
+
+<h2>结论先行：两问定选型</h2>
+<blockquote><p><strong>第一问：谁拿计划？</strong>Skill 里是 Claude 拿着你的文字照做；子代理是第二个 Claude 在自己的窗口拿计划；Workflow 是脚本拿计划，Claude 只看最终结果；Hook 是没人拿计划——事件一到，代码就跑。</p>
+<p><strong>第二问：要不要保证执行？</strong>CLAUDE.md、规则、Skill 都是“请求”，Claude 可以商量；Hook 是“保证”，事件触发就执行，退出码 2 还能把动作拦下来。</p></blockquote>
+<p>记住这两问，后面所有选型都不用背。</p>
+
+<h2>证据一：八个原语，一张表看清</h2>
+<p>英文区作者 Remy 在 2026 年 9 月 21 日的长文里，把官方文档分散在六个对比标签页、三页内容里的东西，收进了一张八原语决策表。下面是按他的表意译的核心四行，加上其余四个原语的定位（完整表见文末来源）：</p>
+<table>
+<tr><th>原语</th><th>谁触发</th><th>在哪跑</th><th>成本落在哪</th><th>能保证什么</th></tr>
+<tr><td><strong>CLAUDE.md</strong></td><td>会话开始，一直在</td><td>你的窗口</td><td>每次请求，全程</td><td>保证不了，只是上下文</td></tr>
+<tr><td><strong>Skill</strong></td><td>你敲 /名字，或 Claude 匹配描述</td><td>你的窗口</td><td>描述一直在，完整正文用时才加载</td><td>保证不了，Claude 解读执行</td></tr>
+<tr><td><strong>子代理</strong></td><td>Claude 委派，或你 @ 它</td><td>它自己的窗口</td><td>只回摘要到主窗口</td><td>隔离：主窗口保持干净</td></tr>
+<tr><td><strong>Hook</strong></td><td>生命周期事件触发</td><td>Claude 之外</td><td>不回输出就是零成本</td><td>它一定跑，每次都跑</td></tr>
+<tr><td><strong>Workflow</strong></td><td>你跑保存好的命令</td><td>脚本，后台</td><td>多个 Agent，一份结果回主窗口</td><td>脚本拿计划，不是 Claude</td></tr>
+<tr><td><strong>规则 / 插件 / Agent 团队</strong></td><td>规则：会话开始或文件命中；插件：安装后；Agent 团队：你要求组队（实验性）</td><td>规则在你的窗口；插件随其内容；团队是多个完整会话</td><td>规则按需；插件是其零件之和；团队是每人一个完整上下文</td><td>规则保证不了；插件是打包箱；团队的同伴可以互相争论</td></tr>
+</table>
+<p>同一篇文还引用了一项研究：2,853 个带 Agent 配置文件的公开仓库里，90.6% 只有 CLAUDE.md 这类上下文文件，5.5% 有 Skill，4.6% 有子代理（作者引用的 arXiv 2026 年 2 月研究）。大多数团队写下规范就停了，后面三件套根本没用上。</p>
+
+<div class="fig dark">
+<h3 style="margin-top:0;color:#fff">图 1 · 谁拿计划：四件套站位</h3>
+<svg viewBox="0 0 680 230" role="img" aria-label="谁拿计划示意图">
+<defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1E3A5F" stroke-width="1"/></pattern></defs>
+<rect width="680" height="230" fill="#0F1A2E"/><rect width="680" height="230" fill="url(#grid)"/>
+<text x="340" y="28" fill="#9fb3d1" font-size="13" text-anchor="middle">计划在谁手里？从左到右，Claude 的话语权越来越小</text>
+<rect x="30" y="60" width="140" height="90" rx="12" fill="#1E3A5F"/><text x="100" y="95" fill="#fff" font-size="16" font-weight="bold" text-anchor="middle">Skill</text><text x="100" y="120" fill="#9fb3d1" font-size="13" text-anchor="middle">Claude 按文字做</text><text x="100" y="140" fill="#9fb3d1" font-size="13" text-anchor="middle">方法</text>
+<rect x="190" y="60" width="140" height="90" rx="12" fill="#1E3A5F"/><text x="260" y="95" fill="#fff" font-size="16" font-weight="bold" text-anchor="middle">子代理</text><text x="260" y="120" fill="#9fb3d1" font-size="13" text-anchor="middle">第二个 Claude 做</text><text x="260" y="140" fill="#9fb3d1" font-size="13" text-anchor="middle">干活的人</text>
+<rect x="350" y="60" width="140" height="90" rx="12" fill="#f5b301"/><text x="420" y="95" fill="#111" font-size="16" font-weight="bold" text-anchor="middle">Workflow</text><text x="420" y="120" fill="#111" font-size="13" text-anchor="middle">脚本拿计划</text><text x="420" y="140" fill="#111" font-size="13" text-anchor="middle">Claude 只看结果</text>
+<rect x="510" y="60" width="140" height="90" rx="12" fill="#1E3A5F"/><text x="580" y="95" fill="#fff" font-size="16" font-weight="bold" text-anchor="middle">Hook</text><text x="580" y="120" fill="#9fb3d1" font-size="13" text-anchor="middle">没人拿计划</text><text x="580" y="140" fill="#9fb3d1" font-size="13" text-anchor="middle">事件一到就跑</text>
+<text x="340" y="190" fill="#eaf2ff" font-size="14" text-anchor="middle">选型先看这一行，再看成本和保证程度</text>
+</svg>
+<div class="cap">图 1：按 Remy 八原语表意译。Workflow 一行标黄，因为它是多数人最陌生的。</div>
+</div>
+
+<h2>证据二：那个“十次里翻一次车”的 .env 故事</h2>
+<p>Remy 讲了自己的真实教训：他的 CLAUDE.md 里长期有一行“绝不碰 .env”，十次里大概九次都管用。听着不错，直到第十次改写了密钥，他不得不去轮换密钥。后来他把这四个字挪进了 PreToolUse Hook：路径一匹配就退出码 2，直接拒写。在他自己的叙述里，翻车率归零。</p>
+<p>这不是说 CLAUDE.md 写错了，是放错了地方。需要“每次必拦”的事，就不该放在一个“可以商量”的地方。这是全文最值钱的一句话：<strong>不是提示词写得不好，是放错了原语。</strong></p>
+
+<div class="fig dark">
+<h3 style="margin-top:0;color:#fff">图 2 · 保证程度阶梯：请求 vs 保证</h3>
+<svg viewBox="0 0 680 250" role="img" aria-label="保证程度阶梯图">
+<rect width="680" height="250" fill="#0F1A2E"/><defs><pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1E3A5F" stroke-width="1"/></pattern></defs><rect width="680" height="250" fill="url(#grid2)"/>
+<text x="30" y="30" fill="#9fb3d1" font-size="13">越往上，越能“保证”，越不依赖模型“愿意”</text>
+<rect x="60" y="180" width="560" height="34" rx="8" fill="#1E3A5F"/><text x="340" y="202" fill="#eaf2ff" font-size="14" text-anchor="middle">CLAUDE.md / 规则：请求 · 每次都在上下文里花钱</text>
+<rect x="110" y="136" width="460" height="34" rx="8" fill="#2A4A73"/><text x="340" y="158" fill="#eaf2ff" font-size="14" text-anchor="middle">Skill：请求 · 按需加载，用时才花钱</text>
+<rect x="160" y="92" width="360" height="34" rx="8" fill="#3B6AA5"/><text x="340" y="114" fill="#fff" font-size="14" text-anchor="middle">子代理：隔离 · 主窗口只收摘要</text>
+<rect x="210" y="48" width="260" height="34" rx="8" fill="#f5b301"/><text x="340" y="70" fill="#111" font-size="14" font-weight="bold" text-anchor="middle">Hook：保证 · 事件到就跑，退出 2 拦停</text>
+</svg>
+<div class="cap">图 2：保证程度阶梯。拦危险操作、跑格式化、记日志，往上层放。</div>
+</div>
+
+<h2>证据三：Skill 是方法，子代理是干活的人</h2>
+<p>devpedia 的 Claude Code 教程把最常见的混淆点破了：<strong>Skill 专精的是方法</strong>——“这类任务来了，按这个配方走，用这些资源、模板、校验”；<strong>子代理专精的是执行者</strong>——“把这个问题交给一个专为这活搭的 Agent，它有自己的上下文，常常还有自己的工具限制”。</p>
+<p>它的决策表很实用，直接抄：</p>
+<table>
+<tr><th>如果你的价值在……</th><th>用</th></tr>
+<tr><td>输出格式 / 模板</td><td>Skill</td></tr>
+<tr><td>专精一个角色（探索、审安全、做规划）</td><td>子代理</td></tr>
+<tr><td>打包好的示例、模板、脚本</td><td>Skill</td></tr>
+<tr><td>把探索和分析挡在主线程之外</td><td>子代理</td></tr>
+<tr><td>必须每次都跑，不依赖模型“决定”跑不跑</td><td>Hook</td></tr>
+<tr><td>一条短而稳定的项目规则</td><td>CLAUDE.md</td></tr>
+</table>
+<p>而且它提醒了一句组合打法，后面实操会直接用：<strong>子代理探索找规律 → Skill 把分析定成固定格式输出 → Hook 在收尾前校验结果。</strong>三件套各干各的，不抢活。</p>
+
+<h2>证据四：Workflow 和“耐久边界”——别拿它当流水线</h2>
+<p>一份 2026 年 10 月 3 日的 Agentic Coding 研究笔记（kruxia/foundry）盘点了 Claude Code 当时的内置编排能力：子代理嵌套与 worktree 隔离、动态 Workflow（JS 脚本编排）、Agent 视图 / 后台会话、实验性的 Agent 团队、/goal 与 /loop（会话内调度）、跨会话消息、channels、云端会话与 Projects（公开测试版）、routines（云端 cron、API、GitHub 事件触发，研究预览）、GitHub Actions、检查点与回退。</p>
+<p>同一份笔记也划清了耐久边界，写文时必须照实转述：Workflow 不接受中途用户输入、只能在会话内续跑；后台会话是本地的，关机就停；/loop 任务 7 天过期；Agent 团队不能恢复队友；routines 是即发即弃式会话，有每小时上限；成本数据是按会话估算的。笔记作者的结论是：<strong>目前没有第一流的、可跨多天多阶段、带人工审批门和跨会话预算治理的耐久流水线——那仍是编排器自己的活。</strong></p>
+<p>这句话直接决定了 Workflow 的定位：它是“一次跑完、脚本拿计划”的批量活，不是“挂一周、中间随时审批”的流水线。拿它当流水线，迟早被 7 天过期和关机停跑教做人。</p>
+
+<div class="fig dark">
+<h3 style="margin-top:0;color:#fff">图 3 · 成本落在哪：四件套花钱方式不一样</h3>
+<svg viewBox="0 0 680 260" role="img" aria-label="成本对比图">
+<rect width="680" height="260" fill="#0F1A2E"/><defs><pattern id="grid3" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1E3A5F" stroke-width="1"/></pattern></defs><rect width="680" height="260" fill="url(#grid3)"/>
+<text x="30" y="28" fill="#9fb3d1" font-size="13">同一件事，四种花法。横向是“谁在花”，不是精确计费</text>
+<text x="30" y="70" fill="#eaf2ff" font-size="14">CLAUDE.md</text><rect x="170" y="52" width="470" height="26" rx="6" fill="#3B6AA5"/><text x="180" y="70" fill="#fff" font-size="13">每次请求都进上下文，全程花钱</text>
+<text x="30" y="115" fill="#eaf2ff" font-size="14">Skill</text><rect x="170" y="97" width="180" height="26" rx="6" fill="#2A4A73"/><text x="180" y="115" fill="#fff" font-size="13">用时才加载正文</text>
+<text x="30" y="160" fill="#eaf2ff" font-size="14">子代理</text><rect x="170" y="142" width="240" height="26" rx="6" fill="#2A4A73"/><text x="180" y="160" fill="#fff" font-size="13">自己窗口干活，只回摘要</text>
+<text x="30" y="205" fill="#eaf2ff" font-size="14">Hook</text><rect x="170" y="187" width="90" height="26" rx="6" fill="#f5b301"/><text x="180" y="205" fill="#111" font-size="13">无输出≈零成本</text>
+<text x="30" y="245" fill="#9fb3d1" font-size="13">Workflow：多个 Agent 干活，一份结果回主窗口——批量时划算，单件活别用</text>
+</svg>
+<div class="cap">图 3：成本示意，非计费数据。Workflow 的“多 Agent 一结果”适合批量，不适合单件活。</div>
+</div>
+
+<h2>实操：四步决策 + 三份可复制模板</h2>
+<p>下面是直接能用的流程。先走四步，再按需复制模板。模板按英文区公开教程整理，未逐条实测；跑之前按文末检查表对照官方文档核对一遍，尤其是你用的版本。</p>
+
+<div class="flow">
+<div class="step"><div class="num">1</div><div><h3>问谁拿计划</h3><p>需要“照着固定流程走”→ Skill；需要“派个人去干”→ 子代理；需要“脚本说了算、批量跑”→ Workflow；需要“事件一到就执行”→ Hook。</p></div></div>
+<div class="arrow">↓</div>
+<div class="step"><div class="num">2</div><div><h3>问要不要保证</h3><p>能商量 → Skill / 子代理 / CLAUDE.md。不能商量（拦危险写、跑格式化、记日志）→ Hook，退出码 2 拦停。</p></div></div>
+<div class="arrow">↓</div>
+<div class="step"><div class="num">3</div><div><h3>问成本落在哪</h3><p>CLAUDE.md 全程花钱，别塞流程；Skill 按需加载；子代理只回摘要；Workflow 批量才划算。</p></div></div>
+<div class="arrow">↓</div>
+<div class="step"><div class="num">4</div><div><h3>组链，不单点</h3><p>默认组合：子代理探索 → Skill 定格式 → Hook 验收。需要批量时，把整条链放进 Workflow 的脚本里。</p></div></div>
+</div>
+
+<h3>模板 A：Skill 骨架（.claude/skills/&lt;名字&gt;/SKILL.md）</h3>
+<pre><code>---
+name: review-pr
+description: 拉取 PR 差异，按检查表出评审结论。触发：评审、PR、review。
+---
+
+# 评审 PR
+
+## 什么时候用
+有人说“评审这个 PR”时用。
+
+## 流程
+1. 拉取差异，只看本次改动，不翻旧账。
+2. 按检查表逐项过：架构、性能、模式、质量。
+3. 每项给结论：通过 / 阻塞 / 待确认，并贴出对应 diff 行。
+
+## 检查表
+- [ ] 没有把密钥、Token 写进代码
+- [ ] 危险操作有确认或回退
+- [ ] 改动有测试或说明为什么不用测
+
+## 输出格式
+结论一句话 + 阻塞项列表 + 待确认项列表。不要写散文。</code></pre>
+
+<h3>模板 B：子代理定义（.claude/agents/code-reviewer.md，按公开教程的 frontmatter 写法）</h3>
+<pre><code>---
+name: code-reviewer
+description: 按架构、性能、模式、质量评审代码。实现功能后或评审改动时主动使用。
+tools: Read, Glob, Grep, Bash
+model: opus
+skills:
+  - code-review
+---
+
+你是代码评审员。只读改动，只回结论：阻塞项、待确认项、通过项。
+不要顺手改代码。评审完就停。</code></pre>
+<p>写法要点来自 devpedia：子代理用 Markdown + frontmatter 定义，不继承完整系统提示；内置的有 Explore（只读快搜）、Plan；常见自定义角色是 code-reviewer、debugger、planner、test-runner、security-auditor、docs-writer。</p>
+
+<h3>模板 C：Hook（.claude/settings.json，PreToolUse 拦写 + PostToolUse 自动格式化）</h3>
+<pre><code>{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/block-sensitive-writes.sh" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [{ "type": "command", "command": "npx eslint --fix $(jq -r '.tool_input.file_path')" }]
+      }
+    ]
+  }
+}</code></pre>
+<p>block-sensitive-writes.sh 的核心逻辑：路径命中敏感文件（如 .env）时，向 stderr 写原因并以 <strong>退出码 2</strong> 退出。按 devpedia 的说明：退出 0 是成功，退出 2 是阻塞错误，<strong>其他退出码都是非阻塞错误——退出 1 拦不住任何东西</strong>，这是经典 bug 来源。Hook 处理器分 command / http / prompt / agent 四种；常用事件有 SessionStart、UserPromptSubmit、PreToolUse、PostToolUse、PostToolUseFailure、Stop、SubagentStop、Notification。官方事件列表在 2026 年 9 月已超 30 个，不是每个都支持退出 2 拦截，关键用途要去官方文档确认。</p>
+
+<div class="fig dark">
+<h3 style="margin-top:0;color:#fff">图 4 · 默认组合链：探索 → 定格式 → 验收</h3>
+<svg viewBox="0 0 680 180" role="img" aria-label="组合链示意图">
+<rect width="680" height="180" fill="#0F1A2E"/><defs><pattern id="grid4" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1E3A5F" stroke-width="1"/></pattern></defs><rect width="680" height="180" fill="url(#grid4)"/>
+<rect x="30" y="55" width="160" height="70" rx="12" fill="#1E3A5F"/><text x="110" y="85" fill="#fff" font-size="15" font-weight="bold" text-anchor="middle">子代理探索</text><text x="110" y="108" fill="#9fb3d1" font-size="12" text-anchor="middle">找规律，不进主窗口</text>
+<text x="205" y="100" fill="#f5b301" font-size="22">→</text>
+<rect x="230" y="55" width="160" height="70" rx="12" fill="#1E3A5F"/><text x="310" y="85" fill="#fff" font-size="15" font-weight="bold" text-anchor="middle">Skill 定格式</text><text x="310" y="108" fill="#9fb3d1" font-size="12" text-anchor="middle">输出固定，不写散文</text>
+<text x="405" y="100" fill="#f5b301" font-size="22">→</text>
+<rect x="430" y="55" width="220" height="70" rx="12" fill="#f5b301"/><text x="540" y="85" fill="#111" font-size="15" font-weight="bold" text-anchor="middle">Hook 验收</text><text x="540" y="108" fill="#111" font-size="12" text-anchor="middle">收尾前校验，不通过不算完</text>
+</svg>
+<div class="cap">图 4：组合打法来自 devpedia。示例：/audit Skill 拉起安全 / 性能 / 风格三个子代理，Hook 做最终校验。</div>
+</div>
+
+<h3>一个完整例子：/audit 怎么串起三件套</h3>
+<p>官方文档的组合示例里有现成的：<strong>Skill + 子代理</strong>——一个 /audit Skill 拉起安全、性能、风格三个子代理，在隔离上下文里并行干活；<strong>CLAUDE.md + Skill</strong>——CLAUDE.md 只留“按 API 规范来”一句话，完整风格指南放 Skill 里按需加载；<strong>Hook + MCP</strong>——改了关键文件，Hook 触发外部通知。照这个样子串，你的主窗口永远只收结论，不收过程。</p>
+
+<div class="fig dark">
+<h3 style="margin-top:0;color:#fff">图 5 · Hook 退出码：只有 2 能拦停</h3>
+<svg viewBox="0 0 680 170" role="img" aria-label="Hook退出码示意图">
+<rect width="680" height="170" fill="#0F1A2E"/><defs><pattern id="grid5" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1E3A5F" stroke-width="1"/></pattern></defs><rect width="680" height="170" fill="url(#grid5)"/>
+<rect x="40" y="50" width="170" height="70" rx="12" fill="#1E3A5F"/><text x="125" y="80" fill="#fff" font-size="20" font-weight="bold" text-anchor="middle">退出 0</text><text x="125" y="105" fill="#9fb3d1" font-size="13" text-anchor="middle">成功，放行</text>
+<rect x="255" y="50" width="170" height="70" rx="12" fill="#f5b301"/><text x="340" y="80" fill="#111" font-size="20" font-weight="bold" text-anchor="middle">退出 2</text><text x="340" y="105" fill="#111" font-size="13" text-anchor="middle">阻塞错误，拦停</text>
+<rect x="470" y="50" width="170" height="70" rx="12" fill="#7f1d1d"/><text x="555" y="80" fill="#fff" font-size="20" font-weight="bold" text-anchor="middle">退出 1</text><text x="555" y="105" fill="#fca5a5" font-size="13" text-anchor="middle">非阻塞，拦不住</text>
+</svg>
+<div class="cap">图 5：按 devpedia 的退出码说明绘制。写拦截 Hook 前，先测一次退出码。</div>
+</div>
+
+<h2>Checklist：上生产前逐项打勾</h2>
+<table>
+<tr><th>□</th><th>检查项</th><th>怎么判</th></tr>
+<tr><td>☐</td><td>每个需求都问过“谁拿计划”</td><td>能说出它属于 Skill / 子代理 / Hook / Workflow 中的哪一个</td></tr>
+<tr><td>☐</td><td>CLAUDE.md 里没有塞流程</td><td>只留短而稳定的规则；流程已拆成 Skill</td></tr>
+<tr><td>☐</td><td>“必须拦”的事都在 Hook 里</td><td>不是写在 CLAUDE.md 里祈祷；拦截 Hook 已实测退出码 2 能拦停</td></tr>
+<tr><td>☐</td><td>子代理有 frontmatter 与工具限制</td><td>只读活只给读工具；评审员不顺手改代码</td></tr>
+<tr><td>☐</td><td>Workflow 没被当成流水线</td><td>无中途输入、会话内续跑、关机停跑、/loop 7 天过期都已考虑</td></tr>
+<tr><td>☐</td><td>组合链完整</td><td>探索 → 定格式 → 验收，三段都有归属，没有一段是“靠自觉”</td></tr>
+<tr><td>☐</td><td>每次模型升级后删一次</td><td>先停用一周，无回归再删；不再挣位置的原语删掉（Remy 的建议）</td></tr>
+</table>
+
+<h2>常见坑：这五个地方最容易翻车</h2>
+<ol>
+<li><strong>退出 1 当拦截用。</strong>拦不住。拦截必须退出 2，且要实测。</li>
+<li><strong>Workflow 里等审批。</strong>Workflow 不接受中途用户输入。需要审批的活，拆出来放 Hook + 人工门，别塞进脚本里等。</li>
+<li><strong>“1000 个 Agent、16 并发”当一成不变的数字背。</strong>这是官方 Workflow 文档口径，版本变化快，写方案时核对当前版本，别当成永久承诺。</li>
+<li><strong>把 Agent 团队当稳定功能规划。</strong>它是实验性的，且不能恢复队友。生产排期别依赖它。</li>
+<li><strong>抄了模板不核对版本。</strong>Hook 事件列表、子代理字段、Workflow 能力都在变，本文模板按 2026 年 9–10 月公开教程整理。跑之前对照你用的版本的官方文档核对一遍。</li>
+</ol>
+
+<div class="warn"><strong>诚实说明：</strong>本文是“公开教程解读 + 决策框架”，不是实测报告。模板按英文区公开教程整理，未逐条在真机上实测；引用的 90.6% / 5.5% / 4.6%、.env 案例、1000 / 16 并发均已标注来源与口径（1000 / 16 为官方 Workflow 文档口径，版本变化快）。跑通后再说“实测可用”，跑通前只说“按教程整理”。</div>
+
+<h2>来源</h2>
+<p class="src">1. Remy，《Claude Code Skills vs Subagents vs Hooks vs Workflows: Which to Use in 2026》，dev.to / Towards AI，2026-09-21：<a href="https://dev.to/remybuilds/claude-code-skills-vs-subagents-vs-hooks-vs-workflows-which-to-use-in-2026-5bcf">dev.to 全文</a>（八原语表、2,853 仓库研究、.env 案例、删旧原语建议均出自此文；研究本身标注为作者引用的 arXiv 2026-02 研究）。<br>
+2. camilasabino/devpedia，《Claude Code Skills, Subagents, and Hooks》，GitHub：<a href="https://github.com/camilasabino/devpedia/blob/HEAD/src/content/guides/en/ai-engineering/claude-code/claude-code-skills-subagents-and-hooks.mdx">devpedia 全文</a>（方法 vs 执行者区分、决策表、组合打法、Hook 四处理器与退出码）。<br>
+3. kruxia/foundry，《claude_code_substrate.md》，2026-10-03 研究笔记，GitHub：<a href="https://github.com/kruxia/foundry/blob/HEAD/docs/research/2026-10-03-agentic-coding-harness-notes/claude_code_substrate.md">foundry 笔记</a>（内置编排能力盘点与耐久边界；1000 / 16 引自官方 Dynamic Workflows 文档口径）。<br>
+4. Claude Code 官方文档 Features Overview（经 GitHub 镜像 stavarengo / posimind 转载）：<a href="https://github.com/stavarengo/claude-code-docs/blob/HEAD/content/docs/claude/code.claude.com/docs/en/features-overview.md">features-overview</a>（扩展层定位与组合示例）。<br>
+5. 中文区对照：网易号《多数开发者不知道：Claude Code 还能自己写命令》，仅覆盖 Skill / CLAUDE.md / Hook / MCP 基础区分，未覆盖 Workflow / Agent 团队与“谁拿计划”决策表——这正是本篇补的信息差。</p>
+
+<div class="cta">
+<h2>下一步：把这篇变成你的 Skill</h2>
+<p>长文看完就忘，Skill 能一直用。配套 Skill 里有决策表、三份可复制模板、失败回退写法：<a href="../skills/07-claude-code-primitives.html">Claude Code 四件套分工 Skill →</a></p>
+<p>做完这一步，你的 Claude Code 配置就只剩一句话：该放哪的放哪，该拦的拦住。</p>
+</div>
+
+<p class="tag">AI包工头老麦，分享实操干货包你满意 · 关注 X：<a href="https://x.com/LaomaiAI">@LaomaiAI</a> · 公众号：AI包工头老麦</p>
+</body></html>
