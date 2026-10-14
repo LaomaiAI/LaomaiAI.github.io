@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skill：Claude Code 四件套分工 | AI包工头老麦</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.8;color:#1a1a1a}h1{font-size:26px}h2{font-size:20px;margin-top:32px;border-left:4px solid #f5b301;padding-left:12px}h3{font-size:17px}a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}blockquote{border-left:3px solid #e5e5e5;margin:16px 0;padding-left:12px;color:#555}.tag{color:#666;font-size:14px}table{border-collapse:collapse;width:100%;font-size:15px}th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:top}th{background:#fffbe6}.card{border:1px solid #eee;border-radius:14px;padding:18px;margin:16px 0}.card.go{border-color:#22c55e;background:#f0fdf4}.card.nogo{border-color:#f97316;background:#fff7ed}.cta{border:2px solid #f5b301;border-radius:14px;padding:18px;background:#fffbe6}.warn{border:1px solid #f97316;background:#fff7ed;border-radius:12px;padding:16px;margin:20px 0}</style></head>
+<body><p class="tag"><a href="../index.html">← 回首页</a> · <a href="https://x.com/LaomaiAI">X @LaomaiAI</a> · 公众号：AI包工头老麦 · <a href="../articles/07-claude-code-four-primitives.html">长文：别再堆 Agent 了，先分清四件套 →</a></p>
+<h1>Skill：Claude Code 四件套分工（谁拿计划，两问定选型）</h1>
+<p class="tag">来源：07 长文 + Remy 八原语表（dev.to / Towards AI，2026-09-21）+ devpedia《Skills, Subagents, and Hooks》+ kruxia/foundry 2026-10-03 研究笔记 + Claude Code 官方文档 Features Overview。模板按公开教程整理，未逐条实测；跑之前对照你用的版本的官方文档核对。</p>
+<p>直接把下面的提示词丢给你的 Agent，即可使用这个 Skill。先过检查表，再看两个完整示例，最后按失败回退模板写验收标准。</p>
+
+<h2>什么时候用这个 Skill</h2>
+<p>往 Claude Code 里加任何新配置之前用：写 Skill、加子代理、挂 Hook、跑 Workflow。目标：5 分钟定选型，不把流程塞错地方、不把“请求”当“保证”。</p>
+
+<h2>核心原则</h2>
+<ul>
+<li><strong>先问谁拿计划，再写配置。</strong>Skill：Claude 按文字做。子代理：第二个 Claude 做。Workflow：脚本拿计划。Hook：没人拿计划，事件一到就跑。</li>
+<li><strong>请求 ≠ 保证。</strong>CLAUDE.md、规则、Skill 都是请求，可以商量；Hook 是保证，退出码 2 能拦停。</li>
+<li><strong>CLAUDE.md 不塞流程。</strong>只留短而稳定的规则；流程拆成 Skill，按需加载。</li>
+<li><strong>组合，不单点。</strong>默认链：子代理探索 → Skill 定格式 → Hook 验收。</li>
+</ul>
+
+<h2>一、决策清单（可打印检查表）</h2>
+<p>7 项全部打勾，才算选型完成。有一项打不上，就回炉。</p>
+<table>
+<tr><th>□</th><th>检查项</th><th>怎么判</th></tr>
+<tr><td>☐</td><td>每个需求都问过“谁拿计划”</td><td>能说出它属于 Skill / 子代理 / Hook / Workflow 中的哪一个</td></tr>
+<tr><td>☐</td><td>“必须拦”的事都在 Hook 里</td><td>不是写在 CLAUDE.md 里祈祷；拦截 Hook 已实测退出码 2 能拦停</td></tr>
+<tr><td>☐</td><td>CLAUDE.md 里没有流程</td><td>只留短规则；部署、评审、测试流程已拆成 Skill</td></tr>
+<tr><td>☐</td><td>子代理有 frontmatter 与工具限制</td><td>只读活只给读工具；评审员不顺手改代码</td></tr>
+<tr><td>☐</td><td>Workflow 没被当成流水线</td><td>无中途输入、会话内续跑、关机停跑、/loop 7 天过期都已考虑</td></tr>
+<tr><td>☐</td><td>组合链完整</td><td>探索 → 定格式 → 验收三段都有归属，没有一段靠“自觉”</td></tr>
+<tr><td>☐</td><td>退出码已实测</td><td>拦截 Hook 走过一次 0 / 2 / 1 三种退出码，确认只有 2 能拦停</td></tr>
+</table>
+
+<h2>二、决策表（两问定选型）</h2>
+<table>
+<tr><th>需求</th><th>用</th><th>理由</th></tr>
+<tr><td>照固定流程走，输出固定格式</td><td>Skill</td><td>Claude 按文字做；正文按需加载</td></tr>
+<tr><td>派个人去干，过程别进主窗口</td><td>子代理</td><td>第二个 Claude 在自己窗口干，只回摘要</td></tr>
+<tr><td>事件一到就执行，不能商量</td><td>Hook</td><td>保证执行；退出 2 拦停</td></tr>
+<tr><td>批量跑，脚本说了算</td><td>Workflow</td><td>脚本拿计划；多 Agent 干活，一份结果回主窗口</td></tr>
+<tr><td>一条短而稳定的项目规则</td><td>CLAUDE.md</td><td>一直都在；但别塞流程，全程花钱</td></tr>
+<tr><td>需要“每次必拦”</td><td>Hook（不是 CLAUDE.md）</td><td>.env 教训：写在 CLAUDE.md 里十次翻一次</td></tr>
+</table>
+
+<h2>三、完整示例 1：正例——/audit 串起三件套</h2>
+<div class="card go"><h3>✅ 正例：评审 PR，一次配齐</h3>
+<p><strong>场景：</strong>团队要求每个 PR 都过安全 / 性能 / 风格三项评审，主窗口只收结论。</p>
+<p><strong>配置：</strong></p>
+<ul>
+<li>Skill <code>/audit</code>：写清三项评审的检查表与输出格式（结论一句话 + 阻塞项 + 待确认项，不写散文）。</li>
+<li>子代理：Skill 拉起 security-auditor、performance-reviewer、style-reviewer 三个子代理，各自在隔离上下文里干活，只回摘要。</li>
+<li>Hook：PostToolUse 挂格式化；PreToolUse 挂敏感文件拦截，退出码 2。</li>
+<li>CLAUDE.md：只留一句“评审按 /audit 来”，不塞检查表正文。</li>
+</ul>
+<p><strong>验收标准：</strong>主窗口收到的只有三份摘要 + 一份合并结论；敏感文件试写一次被拦停（退出 2）；格式化 Hook 在每次写文件后都跑了。</p></div>
+
+<h2>四、完整示例 2：反例——把“必拦”写进 CLAUDE.md</h2>
+<div class="card nogo"><h3>❌ 反例：祈祷式配置</h3>
+<p><strong>场景：</strong>CLAUDE.md 里写了“绝不碰 .env”，还塞了部署全流程、测试步骤、代码规范。</p>
+<p><strong>错在哪：</strong></p>
+<ul>
+<li>“绝不碰”是“必须拦”，却放在一个“可以商量”的地方——Remy 的自述案例里，十次翻了一次，密钥被改写，不得不轮换。</li>
+<li>部署流程塞 CLAUDE.md：每次请求全量进上下文，全程花钱，还挤占真正重要的规则。</li>
+<li>什么都上子代理：查日志也开三个 Agent，账单与等待时间一起涨。</li>
+</ul>
+<p><strong>改法：</strong>“绝不碰 .env”挪进 PreToolUse Hook（退出 2，实测拦停）；部署流程拆成 Skill；查日志这种单件活，主窗口直接干，别开团队。</p></div>
+
+<h2>五、三份可复制模板</h2>
+<h3>模板 A：Skill 骨架</h3>
+<pre><code>---
+name: review-pr
+description: 拉取 PR 差异，按检查表出评审结论。触发：评审、PR、review。
+---
+
+# 评审 PR
+
+## 什么时候用
+有人说“评审这个 PR”时用。
+
+## 流程
+1. 拉取差异，只看本次改动，不翻旧账。
+2. 按检查表逐项过：架构、性能、模式、质量。
+3. 每项给结论：通过 / 阻塞 / 待确认，并贴出对应 diff 行。
+
+## 检查表
+- [ ] 没有把密钥、Token 写进代码
+- [ ] 危险操作有确认或回退
+- [ ] 改动有测试或说明为什么不用测
+
+## 输出格式
+结论一句话 + 阻塞项列表 + 待确认项列表。不要写散文。</code></pre>
+
+<h3>模板 B：子代理 frontmatter</h3>
+<pre><code>---
+name: code-reviewer
+description: 按架构、性能、模式、质量评审代码。实现功能后或评审改动时主动使用。
+tools: Read, Glob, Grep, Bash
+model: opus
+skills:
+  - code-review
+---
+
+你是代码评审员。只读改动，只回结论：阻塞项、待确认项、通过项。
+不要顺手改代码。评审完就停。</code></pre>
+
+<h3>模板 C：Hook（拦截 + 格式化）</h3>
+<pre><code>{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/block-sensitive-writes.sh" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [{ "type": "command", "command": "npx eslint --fix $(jq -r '.tool_input.file_path')" }]
+      }
+    ]
+  }
+}</code></pre>
+<p>block-sensitive-writes.sh：路径命中敏感文件时，向 stderr 写原因并以<strong>退出码 2</strong> 退出。退出 0 成功放行；退出 2 阻塞拦停；<strong>其他退出码（含 1）都是非阻塞，拦不住</strong>。Hook 处理器分 command / http / prompt / agent 四种；常用事件：SessionStart、UserPromptSubmit、PreToolUse、PostToolUse、PostToolUseFailure、Stop、SubagentStop、Notification。官方事件列表已超 30 个，不是每个都支持退出 2 拦截，关键用途对照官方文档确认。</p>
+
+<h2>六、失败回退模板</h2>
+<table>
+<tr><th>失败场景</th><th>回退动作</th><th>兜底原则</th></tr>
+<tr><td>Hook 没拦住危险写（退出码写错）</td><td>停下手头活；检查 Hook 脚本退出码，改为 2；重跑一次试写验证</td><td>拦截 Hook 上线前必须实测三种退出码</td></tr>
+<tr><td>子代理越权改了代码</td><td>回滚改动；收紧 tools 列表为只读；frontmatter 加“不要顺手改代码”</td><td>评审类子代理默认只读</td></tr>
+<tr><td>Workflow 中途需要审批</td><td>停掉 Workflow；把审批点拆出来，改 Hook + 人工门</td><td>Workflow 里不等人</td></tr>
+<tr><td>后台会话关机停了</td><td>按检查点重跑未完成部分；长活拆成多段，段间落盘</td><td>不把多天活押在一次会话里</td></tr>
+<tr><td>模板跑不通（版本差异）</td><td>对照当前版本官方文档核对字段与事件名；不要硬猜</td><td>模板是按 2026 年 9–10 月公开教程整理的，不是官方承诺</td></tr>
+<tr><td>拿不准选哪个原语</td><td>回决策表：先问谁拿计划，再问要不要保证</td><td>答不上来就不写配置</td></tr>
+</table>
+
+<h2>七、提示词（可复制）</h2>
+<pre><code>你按“Claude Code 四件套分工”帮我给这个需求选型，不要直接写配置：
+
+需求：[填入一句话，例如：每个 PR 都要过安全/性能/风格评审，主窗口只收结论]
+
+请按下面步骤输出：
+1. 问谁拿计划：这个需求属于 Skill / 子代理 / Hook / Workflow 中的哪一个？为什么？
+2. 问要不要保证：有没有“必须拦 / 必须每次跑”的部分？有的话，它必须进 Hook，不能写进 CLAUDE.md。
+3. 问成本：CLAUDE.md 里有没有被塞流程？有的话，指出该拆成哪个 Skill。
+4. 给组合：探索 → 定格式 → 验收三段分别归属哪个原语。
+5. 给失败回退：如果 Hook 没拦住、子代理越权、Workflow 中途要审批，分别怎么退。
+6. 最后给三份配置：Skill 骨架、子代理 frontmatter、Hook JSON。写不出来的部分标“待确认”，不要编。
+
+约束：不要把“请求”写成“保证”；不要把 Workflow 当多天流水线；退出 1 拦不住任何东西。</code></pre>
+
+<h2>八、审核规则（用这个 Skill 之前先自检）</h2>
+<ul>
+<li>决策表三问都答了吗？答不上来就不写配置。</li>
+<li>“必须拦”的事进 Hook 了吗？还在 CLAUDE.md 里祈祷的，全部挪走。</li>
+<li>拦截 Hook 实测过退出码 2 吗？没测过的不算上线。</li>
+<li>模板里的字段、事件名对照当前版本官方文档了吗？版本差异不硬猜。</li>
+<li>“1000 / 16 并发”标了官方 Workflow 文档口径 + 核对当前版本吗？别当一成不变的数字写进方案。</li>
+</ul>
+
+<div class="warn"><strong>诚实说明：</strong>本 Skill 是“公开教程整理 + 决策框架”，不是实测报告。模板按 2026 年 9–10 月英文区公开教程整理，未逐条实测；引用数字均已标注来源与口径。跑通后再说“实测可用”。</div>
+
+<div class="cta"><h2>配套长文</h2><p><a href="../articles/07-claude-code-four-primitives.html">别再堆 Agent 了，先分清四件套 →</a></p><p>长文里有八原语全表、.env 案例、耐久边界与五个常见坑。</p></div>
+<p class="tag">AI包工头老麦，分享实操干货包你满意 · 关注 X：<a href="https://x.com/LaomaiAI">@LaomaiAI</a> · 公众号：AI包工头老麦</p>
+</body></html>
