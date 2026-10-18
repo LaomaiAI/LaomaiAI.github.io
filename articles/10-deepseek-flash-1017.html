@@ -34,7 +34,7 @@ img{max-width:100%;border-radius:12px}li{margin:4px 0}
 
 <h2>今天发生了什么：一句话结论</h2>
 <p>DeepSeek V4.1-Flash-1017 已上线官网、App、API，用自反馈强化学习提升端到端项目开发，比如游戏、3D 建模这类从零做到完整的活。来源：<a href="https://api-docs.deepseek.com/news/news261017">DeepSeek 官方公告</a>。</p>
-<p>同一天还发生了两件对你更实际的事：</p>
+<p>同一天还发生了三件对你更实际的事：</p>
 <ul>
 <li>官方建议把 DeepSeek Harness 升级到 v0.2.1-rc.1 或更新，说新模型针对 DeepSeek Harness、腾讯 CodeBuddy、WorkBuddy 做了优化。来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a>。</li>
 <li>Search &amp; Fetch API 向所有人开放。每个端点 $0.75 / 1,000 次调用。经 DeepSeek Harness、Claude Code、Codex 的服务端工具调用 Search &amp; Fetch，对 DeepSeek API 用户目前免费，计费从 2026-10-31 16:00 UTC 开始。来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a> + <a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</li>
@@ -142,7 +142,7 @@ print(page["content"][:2000])</code></pre>
 
 <h2>拿自己 20 到 50 个真实任务对照评测：方法</h2>
 <p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-05-自己跑评测.png" alt="自己跑评测流程"></p>
-<p>厂商的分数不是你的分数。厂商自测是在厂商的 harness 上，用厂商的任务跑的。你的任务、你的 harness、你的验收标准都不一样。所以发布当天最该干的第四件事，是跑你自己的评测集。</p>
+<p>厂商的分数不是你的分数。厂商自测是在厂商的 harness 上，用厂商的任务跑的。你的任务、你的 harness、你的验收标准都不一样。所以发布当天最该干的第三件事，是跑你自己的评测集。</p>
 <h3>第一步：选任务，从真实活里挑</h3>
 <p>从你过去两周真实接过的活里挑 20 到 50 个，覆盖你最常做的 3 到 5 类，每类至少 5 个。不要只挑简单的，也不要只挑你擅长的。每个任务写清三样东西：输入是什么、期望交付物长什么样、验收点是什么。验收点要具体到能判通过还是不通过，比如“接口跑通且返回正确字段”，而不是“效果不错”。</p>
 <h3>第二步：冻结口径，跑之前全部定死</h3>
@@ -164,14 +164,20 @@ print(page["content"][:2000])</code></pre>
 <p><strong>第一，harness 不同，别直接对比分数。</strong>厂商自测分、别人的评测分、你的评测分，harness 不同就不直接对比。对比之前先对齐 harness、任务、评分标准，对不齐就别对比。</p>
 <p><strong>第二，厂商自测分看看就好，别当结论。</strong>下面这张表里的分数，全部是厂商自测，非独立复现：</p>
 <p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-06-厂商自测vs独立复现.png" alt="厂商自测分对照"></p>
-<table><tr><th>基准（厂商自测，非独立复现）</th><th>V4.1-Flash-1017</th><th>上版</th></tr>
-<tr><td>DeepSWE v1.1</td><td>77.0</td><td>74.2</td></tr>
-<tr><td>Terminal-Bench 4.0</td><td>42.3</td><td>31.2</td></tr>
-<tr><td>Automation-Bench</td><td>60.5</td><td>未提供</td></tr>
-<tr><td>Agents Last Exam</td><td>35.4</td><td>未提供</td></tr>
-<tr><td>Apex Bench</td><td>72.1</td><td>未提供</td></tr></table>
-<p>来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a>内的厂商自测基准表。</p>
-<p>别只吹赢的项：同一厂商自测表中，Opus 5 在 Terminal-Bench（51.8）等 6 项仍领先。只挑赢的项讲，等于没讲。厂商说这次是性能与成本的帕累托改进，那是厂商的说法，引用时请标注厂商自述。</p>
+<table><tr><th>基准（厂商自测，非独立复现）</th><th>V4.1-Flash-1017</th><th>上版（V4.1-Flash）</th><th>Opus 5</th></tr>
+<tr><td>HLE w/o tools（括号内为纯文本子集）</td><td>42.6（44.0）</td><td>36.8（39.1）</td><td>56.3</td></tr>
+<tr><td>Terminal-Bench 4.0</td><td>42.3</td><td>31.2</td><td>51.8</td></tr>
+<tr><td>DeepSWE v1.1</td><td>77.0</td><td>74.2</td><td>74.0</td></tr>
+<tr><td>ProgramBench</td><td>29.1</td><td>20.3</td><td>37.0</td></tr>
+<tr><td>NL2Repo-Bench</td><td>68.2</td><td>65.4</td><td>75.3</td></tr>
+<tr><td>Automation-Bench v1.0.6</td><td>60.5</td><td>54.8</td><td>50.3</td></tr>
+<tr><td>Agents Last Exam</td><td>35.4</td><td>31.8</td><td>28.6</td></tr>
+<tr><td>Apex Bench v1.1</td><td>72.1</td><td>64.6</td><td>65.8</td></tr>
+<tr><td>Chartography（w/tools）</td><td>83.0</td><td>78.9</td><td>84.0</td></tr>
+<tr><td>BabyVision（w/tools）</td><td>92.5</td><td>89.6</td><td>94.1</td></tr>
+<tr><td>ZeroBench-main（w/tools）</td><td>51.0</td><td>49.0</td><td>52.0</td></tr></table>
+<p>来源：DeepSeek 官方 HF 模型卡 <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">deepseek-ai/DeepSeek-V4.1-Flash-1017</a> 内的厂商自测基准表（完整 11 项）。</p>
+<p>别只吹赢的项：在完整 11 项对照表（HF 官方模型卡）中，Opus 5 在 7 项仍领先（HLE、Terminal-Bench、ProgramBench、NL2Repo-Bench、Chartography、BabyVision、ZeroBench-main），Flash-1017 在其余 4 项领先。只挑赢的项讲，等于没讲。厂商说这次是性能与成本的帕累托改进，那是厂商的说法，引用时请标注厂商自述。</p>
 <p><strong>第三，Search &amp; Fetch 不是万能抓取。</strong>需要登录、付费墙、被站方策略拦的内容，抓不到，返回 404 一类错误是正常的。搜索摘要只能当线索，关键结论打开原文验。搜索结果的 <code>authority</code> 和 <code>rerank_score</code> 可以帮你先筛一遍，但不能代替你打开原文。</p>
 <p><strong>第四，自托管别急着上。</strong>二手来源称权重为 MIT 协议，下载前请以 Hugging Face / ModelScope 仓库页面上的许可证为准。二手来源建议自托管用 context 1M、max_tokens 256K+。API 侧的上下文是 1M，最大输出 384K，来源是<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页</a>。自托管的硬件、运维、更新成本要单独算，没算清之前，小团队先走 API。</p>
 <p><strong>第五，免费窗口结束前没验证搜索质量，就别把直调写进生产。</strong>免费窗口是用来验证的，不是用来拖延的。验证完觉得有用，再接；验证完觉得没用，不接，省下的不只是钱，还有接进去之后的维护成本。</p>
@@ -194,7 +200,8 @@ print(page["content"][:2000])</code></pre>
 
 <h2>来源清单（本文关键数字的出处）</h2>
 <ul>
-<li>DeepSeek 官方公告：<a href="https://api-docs.deepseek.com/news/news261017">api-docs.deepseek.com/news/news261017</a>（发布、上线范围、自反馈强化学习、Harness 版本建议、Search &amp; Fetch 价格与免费窗口、开源下载、厂商自测基准表）</li>
+<li>DeepSeek 官方公告：<a href="https://api-docs.deepseek.com/news/news261017">api-docs.deepseek.com/news/news261017</a>（发布、上线范围、自反馈强化学习、Harness 版本建议、Search &amp; Fetch 价格与免费窗口、开源下载）</li>
+<li>DeepSeek 官方 HF 模型卡：<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017</a>（完整 11 项厂商自测基准表，含上版与 Opus 5 对照）</li>
 <li>DeepSeek 官方 Search &amp; Fetch 文档：<a href="https://api-docs.deepseek.com/guides/search">api-docs.deepseek.com/guides/search</a>（端点、参数、返回格式、计费规则、限速、错误处理）</li>
 <li>DeepSeek 官方定价页：<a href="https://api-docs.deepseek.com/quick_start/pricing">api-docs.deepseek.com/quick_start/pricing</a>（模型名与旧别名、Base URL、上下文 1M、最大输出 384K、Token 价格、忙时定义）</li>
 <li>二手来源（已核验与官方一致的部分，官方公告未直接写明）：API 可在 Claude Code、GitHub Copilot、OpenCode 中免改代码接入（本文未实测）；权重 MIT 协议（以下载页许可证为准）；自托管推荐 context 1M、max_tokens 256K+</li>
