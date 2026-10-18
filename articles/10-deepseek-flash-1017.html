@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepSeek V4.1-Flash-1017 发布当日怎么用：零迁移切换 + 联网搜索 + 自己跑评测 | AI包工头老麦</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.9;color:#1a1a1a}
+h1{font-size:26px;line-height:1.4}h2{font-size:21px;margin-top:36px;border-left:4px solid #f5b301;padding-left:12px}h3{font-size:18px;margin-top:28px}
+a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}
+.tag{color:#666;font-size:14px}
+.cta{border:2px solid #f5b301;border-radius:16px;padding:22px;margin:28px 0;background:#fffbe6}
+.cta h2{border:none;padding:0;margin:0 0 8px}
+.src{font-size:14px;color:#555}blockquote{border-left:3px solid #f5b301;margin:18px 0;padding-left:12px;color:#444;background:#fffbe6;border-radius:0 8px 8px 0}
+pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#fffbe6}
+img{max-width:100%;border-radius:12px}li{margin:4px 0}
+</style></head>
+<body>
+<p><a href="../index.html">← 回首页</a></p>
+<h1>DeepSeek V4.1-Flash-1017 发布当日怎么用：零迁移切换 + 联网搜索 + 自己跑评测</h1>
+<p class="tag">2026-10-18 · AI包工头老麦</p>
+<blockquote><strong>这篇讲什么：</strong>DeepSeek V4.1-Flash-1017 发布当天，你该干的三件事：不改代码切过去，把新开的联网搜索接进来，再用自己的真任务跑一遍评测，别只看厂商给的分数。</blockquote>
+<p><strong>Skill（可直接用）：</strong><a href="../skills/10-deepseek-flash-1017.html">DeepSeek V4.1-Flash-1017 发布当日上手 Skill · 零迁移切换 + Search &amp; Fetch + 自跑评测 →</a></p>
+<p><strong>边界声明（待审稿）：</strong>本文为待独立审核的稿件。本文代码按 DeepSeek 官方文档整理，<strong>未经真实 API 调用实测</strong>，跑之前请先用小额调用验证。基准分均为厂商自测，非独立复现。凡标注“二手来源”的内容，官方公告未直接写明，引用时请注意区分。</p>
+
+<p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-01-零迁移对照.png" alt="零迁移切换：改什么，不改什么"></p>
+
+<h2>先说结论：发布当天最值钱的动作，不是吹分，是三件事</h2>
+<p>新模型发布当天，时间线和朋友圈里全是分数。分数看看就好，真正决定你今天该干什么的，是这三件事：</p>
+<ol>
+<li><strong>切过去。</strong>这次切换代码侧零改动，模型名、Base URL、Key、请求格式都不用动。先切，再验证。</li>
+<li><strong>把联网搜索接进来。</strong>Search &amp; Fetch API 这次向所有人开放，还有一个免费窗口，到 10 月 31 日 16:00 UTC 截止。免费窗口内不验证，等到开始计费再想起来，就晚了。</li>
+<li><strong>用自己的真任务跑一遍。</strong>厂商的分数是在厂商的 harness 上跑的，不是你的任务。20 到 50 个你真实接过的任务，跑一遍，通过率和失败原因才是你的分数。</li>
+</ol>
+<p>先抛一个提醒：这篇不帮你吹新模型有多强。强不强，你的任务说了算。</p>
+
+<h2>今天发生了什么：一句话结论</h2>
+<p>DeepSeek V4.1-Flash-1017 已上线官网、App、API，用自反馈强化学习提升端到端项目开发，比如游戏、3D 建模这类从零做到完整的活。来源：<a href="https://api-docs.deepseek.com/news/news261017">DeepSeek 官方公告</a>。</p>
+<p>同一天还发生了两件对你更实际的事：</p>
+<ul>
+<li>官方建议把 DeepSeek Harness 升级到 v0.2.1-rc.1 或更新，说新模型针对 DeepSeek Harness、腾讯 CodeBuddy、WorkBuddy 做了优化。来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a>。</li>
+<li>Search &amp; Fetch API 向所有人开放。每个端点 $0.75 / 1,000 次调用。经 DeepSeek Harness、Claude Code、Codex 的服务端工具调用 Search &amp; Fetch，对 DeepSeek API 用户目前免费，计费从 2026-10-31 16:00 UTC 开始。来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a> + <a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</li>
+<li>开源权重可在 Hugging Face 与 ModelScope 下载。来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a>，下载链接见公告内的 Hugging Face 与 ModelScope 链接。</li>
+</ul>
+
+<h2>零迁移切换怎么做：改什么、不改什么、怎么验证</h2>
+<p>这次切换最省事的地方，就是代码不用动。</p>
+<h3>不改什么</h3>
+<ul>
+<li><strong>模型名不用改。</strong>继续写 <code>deepseek-flash</code>。来源：<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页</a>。</li>
+<li><strong>旧别名不用改。</strong>旧别名 <code>deepseek-v4-flash</code>、<code>deepseek-v4-flash-vision-exp</code> 仍接受，由同一 checkpoint 服务，按 Flash 价格计费。等于旧 checkpoint 已不再单独提供，你发到旧别名的请求，现在走的也是新 checkpoint。来源：<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页注脚</a>。</li>
+<li><strong>Base URL 不用改。</strong>OpenAI 格式 <code>https://api.deepseek.com</code>，Anthropic 格式 <code>https://api.deepseek.com/anthropic</code>。来源：<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页</a>。</li>
+<li><strong>Key 和请求格式不用改。</strong>同 OpenAI / Anthropic 兼容格式。</li>
+<li><strong>接入工具不用改。</strong>二手来源称，API 可在 Claude Code、GitHub Copilot、OpenCode 中免改代码接入。本文未实测，接入前请按你用的工具实际验证。</li>
+</ul>
+<h3>要改什么：只改 Harness 版本</h3>
+<p>把 DeepSeek Harness 升级到 v0.2.1-rc.1 或更新。来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a>。这一步不改代码，只改你本地跑任务的工具版本。</p>
+<h3>验证方法：三步冒烟</h3>
+<p>切完别直接上生产任务，先跑三步冒烟：</p>
+<p><strong>第一步：确认请求通了，且走的是 Flash 计费。</strong>发一条最小的聊天请求，看返回体 model 字段是否回显 <code>deepseek-flash</code>，HTTP 是否 200。再到账单或用量页核对，这次调用是否按 Flash 价格计费。旧别名请求的计费也应显示为 Flash 价格。</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ["DEEPSEEK_API_KEY"],
+    base_url="https://api.deepseek.com",
+)
+
+resp = client.chat.completions.create(
+    model="deepseek-flash",
+    messages=[{"role": "user", "content": "用一句话说：你是谁？"}],
+)
+print(resp.model)
+print(resp.choices[0].message.content)
+print("input tokens:", resp.usage.prompt_tokens, "output tokens:", resp.usage.completion_tokens)</code></pre>
+<p>Anthropic 格式的 Base URL 是 <code>https://api.deepseek.com/anthropic</code>，模型名同样写 <code>deepseek-flash</code>。来源：<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页</a>。</p>
+<p><strong>第二步：功能冒烟，各跑一条。</strong>工具调用一条，长上下文一条，视觉输入一条（官方定价页功能表标注 Flash 支持视觉输入）。来源：<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页</a>。有一条不通，先停下来定位，别带着问题往下走。</p>
+<p><strong>第三步：升级 Harness 后，跑一条端到端小任务。</strong>比如让它从零做一个小网页或小游戏，跑通一次，确认新 checkpoint + 新 Harness 在你的环境里能完整走完一轮。这一步是为后面的自跑评测热身，不是评测本身。</p>
+
+<h2>Search &amp; Fetch 怎么用：代码 + 免费窗口 + 成本算账</h2>
+<p>Search API 负责按 query 找网页，返回结构化结果；Fetch API 负责抓单个网页，返回 Markdown 正文。两个都是原始 JSON API，用和 DeepSeek API 同一个 Bearer Key。来源：<a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</p>
+<h3>代码：直接调 API</h3>
+<pre><code>import os
+import requests
+
+BASE = "https://api.deepseek.com"
+HEADERS = {
+    "Authorization": f"Bearer {os.environ['DEEPSEEK_API_KEY']}",
+    "Content-Type": "application/json",
+}
+
+# 1. 搜索：query 必填，1 到 128 个 Unicode 字符；count 默认 10，范围 1 到 50
+search = requests.post(
+    f"{BASE}/v1/tools/search",
+    headers=HEADERS,
+    json={
+        "query": "DeepSeek V4.1-Flash-1017 site:github.com lang:en after:2025",
+        "count": 5,
+        "need_content": False,  # 只想要摘要时保持 False；想要正文再开 True
+    },
+    timeout=30,
+)
+search.raise_for_status()
+for r in search.json()["results"]:
+    print(r["rerank_score"], r["title"], r["url"])
+    print(r["summary"])
+
+# 2. 抓取：url 必填，HTTP/HTTPS，不含用户名密码，最长 8192 字符
+fetch = requests.post(
+    f"{BASE}/v1/tools/fetch",
+    headers=HEADERS,
+    json={"url": "https://api-docs.deepseek.com/news/news261017"},
+    timeout=30,
+)
+fetch.raise_for_status()
+page = fetch.json()
+print(page["title"])
+print(page["content"][:2000])</code></pre>
+<p>参数口径以官方文档为准：<code>query</code> 支持 <code>site:</code>、<code>-site:</code>、<code>-</code>、<code>-"..."</code>、<code>"..."</code>、<code>lang:</code>、<code>after:</code>、<code>before:</code> 等算子；<code>count</code> 只控制返回条数，不影响单价；<code>need_content</code> 为 <code>false</code> 时 <code>content</code> 恒为空串；返回结果带 <code>rerank_score</code>（0 到 3，1.5 以上算高质量）、<code>authority</code>（0 到 4，3 以上为高权威，-1 为未知）、<code>date</code>（RFC 3339，UTC，未知为 null）。来源：<a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</p>
+<h3>免费窗口：到点就开始计费</h3>
+<p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-02-免费窗口时间轴.png" alt="免费窗口时间轴"></p>
+<p>先分清两条链路，计费不一样：</p>
+<p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-03-两条调用链路.png" alt="两条调用链路"></p>
+<ul>
+<li><strong>链路 A：你自己直接调 API。</strong><code>POST /v1/tools/search</code>、<code>POST /v1/tools/fetch</code>，每次成功调用计费。</li>
+<li><strong>链路 B：服务端工具调用。</strong>在 DeepSeek Harness、Claude Code、Codex 里让模型自己调搜索工具。计费开始前，对 DeepSeek API 用户免费。</li>
+</ul>
+<p>计费开始时间，官方公告与官方文档是同一个时刻的两种写法：公告写 2026-10-31 16:00 UTC，文档写北京时间 2026-11-01 00:00。两者一致。来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a> + <a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</p>
+<p>写稿日是 2026-10-18，免费窗口还剩约 13 天。顺序别反了：<strong>免费窗口内先用链路 B 验证搜索质量，确认有用，再把链路 A 接进自己系统。</strong>等到开始计费才想起来验证，就只能花钱验证了。</p>
+<h3>成本算账：搜索费和模型费分开算</h3>
+<p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-04-成本算账.png" alt="成本算账"></p>
+<p><strong>搜索 / 抓取费：</strong>每个端点 $0.75 / 1,000 次成功调用，Search 和 Fetch 各自计。计费规则比你想的宽松一点：只有返回 HTTP 200 且有结果才计费。Search 必须返回非空 <code>results</code>，Fetch 必须返回正文内容。失败请求、空搜索结果、超时都不计费。来源：<a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</p>
+<p><strong>模型 Token 费：</strong>按官方定价页，<code>deepseek-flash</code> 按 1M token 计。输入缓存命中：闲时 $0.003，忙时 $0.006。输入缓存未命中：闲时 $0.15，忙时 $0.30。输出：闲时 $0.60，忙时 $1.20。忙时是周一至周五 01:00-04:00 和 06:00-10:00 UTC（不含中国法定节假日），其余时间都是闲时，忙时价格是闲时的两倍。来源：<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页</a>。</p>
+<p>两个算术示例，不是实测账单：</p>
+<ul>
+<li>搜索：每天 200 次搜索 + 100 次抓取，30 天共 9,000 次，费用是 9 x $0.75 = $6.75。</li>
+<li>模型：1M 缓存未命中输入（闲时）+ 1M 输出（闲时），费用是 $0.15 + $0.60 = $0.75。</li>
+</ul>
+<p><strong>别混在一起：</strong>搜索费按次，模型费按 token。算预算要两笔分开列，不要只算一笔就说便宜。搜索量大的系统，搜索费可能超过模型费，反过来也一样，看你的用量结构。</p>
+<h3>限速与错误：接进系统前先看这张表</h3>
+<p>每个账号，Search 和 Fetch 各限 5 QPS，互不占用。Fetch 还有额外的单域名 QPS 限制。超限返回 429。来源：<a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</p>
+<p>错误处理按官方文档：408、429、5xx 等一等再重试；402 是余额不足，先充值再重试；其他 4xx 别盲目重试，先改请求。Fetch 的 404 可能是目标站不可用、被站方策略拦了、目标站报错、不支持的内容类型、或抓不到可用 Markdown。Fetch 还受目标站的可达性和访问策略限制。来源：<a href="https://api-docs.deepseek.com/guides/search">官方 Search &amp; Fetch 文档</a>。</p>
+<p>两个实操提醒：第一，搜索 query 会发给搜索引擎，别把密钥、内部链接、私密内容写进 query。第二，搜索摘要不是最终答案，关键结论要打开原文验，见下文“什么时候不该用”。</p>
+
+<h2>拿自己 20 到 50 个真实任务对照评测：方法</h2>
+<p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-05-自己跑评测.png" alt="自己跑评测流程"></p>
+<p>厂商的分数不是你的分数。厂商自测是在厂商的 harness 上，用厂商的任务跑的。你的任务、你的 harness、你的验收标准都不一样。所以发布当天最该干的第四件事，是跑你自己的评测集。</p>
+<h3>第一步：选任务，从真实活里挑</h3>
+<p>从你过去两周真实接过的活里挑 20 到 50 个，覆盖你最常做的 3 到 5 类，每类至少 5 个。不要只挑简单的，也不要只挑你擅长的。每个任务写清三样东西：输入是什么、期望交付物长什么样、验收点是什么。验收点要具体到能判通过还是不通过，比如“接口跑通且返回正确字段”，而不是“效果不错”。</p>
+<h3>第二步：冻结口径，跑之前全部定死</h3>
+<p>任务清单、提示词、评分表、harness 版本，写进一个文件，跑之前不再改。评分表至少包含：通过 / 不通过、失败原因（理解错需求、工具调用失败、输出格式错、中途卡住、其他）。冻结的意思是：跑完不许改评分标准。跑后改标准，等于白跑。</p>
+<h3>第三步：跑，同一环境，每个任务一次</h3>
+<p>同一 harness、同一配置，每个任务跑一次。失败不重跑到过。记录四样东西：checkpoint 名（DeepSeek-V4.1-Flash-1017）、日期、harness 版本、原始输出和耗时。原始日志留着，别只留结论。</p>
+<h3>第四步：算，按类分别算，不只算总通过率</h3>
+<p>总通过率只看一个数，会藏问题。按类分别算通过率，失败按原因归类。哪个类掉得多、哪种失败原因最常见，这才是你真正的信息。比如工具调用失败集中在某一类任务上，那说明问题在工具链，不在模型本身。</p>
+<h3>防自欺三条</h3>
+<ul>
+<li><strong>评分标准跑前定，跑后改等于白跑。</strong>看到结果不好就改标准，是最常见的自欺。</li>
+<li><strong>失败也记。</strong>失败才是你真正的信息。只报通过的项，等于没评测。</li>
+<li><strong>换 harness 就重跑。</strong>不同 harness 的分数不直接对比。旧 checkpoint 现在已由新 checkpoint 服务，你这次跑的结果就是新基线。以后新版本发布，用同一套任务再跑，对比才有意义。不要拿这次的结果和厂商自测分直接对比，harness 不同，任务不同。</li>
+</ul>
+<h3>样本量提醒</h3>
+<p>20 到 50 个任务，通过率上下波动大。差 5 个百分点以内，别急着下结论。评测集小的时候，一个任务的成败就能拉动几个百分点。结论要留有余地，写“在这批任务上通过率是 X”，不要写“这个模型就是 X 水平”。</p>
+
+<h2>什么时候不该用：五条</h2>
+<p><strong>第一，harness 不同，别直接对比分数。</strong>厂商自测分、别人的评测分、你的评测分，harness 不同就不直接对比。对比之前先对齐 harness、任务、评分标准，对不齐就别对比。</p>
+<p><strong>第二，厂商自测分看看就好，别当结论。</strong>下面这张表里的分数，全部是厂商自测，非独立复现：</p>
+<p><img src="https://laomaiai.github.io/assets/10-deepseek-flash-1017/10-DS-06-厂商自测vs独立复现.png" alt="厂商自测分对照"></p>
+<table><tr><th>基准（厂商自测，非独立复现）</th><th>V4.1-Flash-1017</th><th>上版</th></tr>
+<tr><td>DeepSWE v1.1</td><td>77.0</td><td>74.2</td></tr>
+<tr><td>Terminal-Bench 4.0</td><td>42.3</td><td>31.2</td></tr>
+<tr><td>Automation-Bench</td><td>60.5</td><td>未提供</td></tr>
+<tr><td>Agents Last Exam</td><td>35.4</td><td>未提供</td></tr>
+<tr><td>Apex Bench</td><td>72.1</td><td>未提供</td></tr></table>
+<p>来源：<a href="https://api-docs.deepseek.com/news/news261017">官方公告</a>内的厂商自测基准表。</p>
+<p>别只吹赢的项：同一厂商自测表中，Opus 5 在 Terminal-Bench（51.8）等 6 项仍领先。只挑赢的项讲，等于没讲。厂商说这次是性能与成本的帕累托改进，那是厂商的说法，引用时请标注厂商自述。</p>
+<p><strong>第三，Search &amp; Fetch 不是万能抓取。</strong>需要登录、付费墙、被站方策略拦的内容，抓不到，返回 404 一类错误是正常的。搜索摘要只能当线索，关键结论打开原文验。搜索结果的 <code>authority</code> 和 <code>rerank_score</code> 可以帮你先筛一遍，但不能代替你打开原文。</p>
+<p><strong>第四，自托管别急着上。</strong>二手来源称权重为 MIT 协议，下载前请以 Hugging Face / ModelScope 仓库页面上的许可证为准。二手来源建议自托管用 context 1M、max_tokens 256K+。API 侧的上下文是 1M，最大输出 384K，来源是<a href="https://api-docs.deepseek.com/quick_start/pricing">官方定价页</a>。自托管的硬件、运维、更新成本要单独算，没算清之前，小团队先走 API。</p>
+<p><strong>第五，免费窗口结束前没验证搜索质量，就别把直调写进生产。</strong>免费窗口是用来验证的，不是用来拖延的。验证完觉得有用，再接；验证完觉得没用，不接，省下的不只是钱，还有接进去之后的维护成本。</p>
+
+<h2>发布当日清单：照着打勾</h2>
+<ul>
+<li>模型名确认：<code>deepseek-flash</code>，不用改；旧别名仍接受，按 Flash 价格计费</li>
+<li>Harness 升级到 v0.2.1-rc.1 或更新</li>
+<li>三步冒烟：请求通 + 计费对 + 工具调用 / 长上下文 / 视觉各一条</li>
+<li>免费窗口内，用服务端工具调用验证 Search &amp; Fetch 质量</li>
+<li>计费开始时间记好：2026-10-31 16:00 UTC（北京时间 11-01 00:00）</li>
+<li>评测集冻结：20 到 50 个真任务 + 提示词 + 评分表 + harness 版本</li>
+<li>跑完按类算通过率，失败按原因归类，原始日志留着</li>
+<li>对外讲分数时，标注厂商自测、非独立复现，不只讲赢的项</li>
+</ul>
+
+<hr>
+<div class="cta"><h2>Skill：DeepSeek V4.1-Flash-1017 发布当日上手</h2>
+<p>零迁移切换检查表 + Search &amp; Fetch 正反例 + 成本算账模板 + 自跑评测评分表 + 失败回滚，都在 Skill 里：<a href="../skills/10-deepseek-flash-1017.html">DeepSeek V4.1-Flash-1017 发布当日上手 →</a></p></div>
+
+<h2>来源清单（本文关键数字的出处）</h2>
+<ul>
+<li>DeepSeek 官方公告：<a href="https://api-docs.deepseek.com/news/news261017">api-docs.deepseek.com/news/news261017</a>（发布、上线范围、自反馈强化学习、Harness 版本建议、Search &amp; Fetch 价格与免费窗口、开源下载、厂商自测基准表）</li>
+<li>DeepSeek 官方 Search &amp; Fetch 文档：<a href="https://api-docs.deepseek.com/guides/search">api-docs.deepseek.com/guides/search</a>（端点、参数、返回格式、计费规则、限速、错误处理）</li>
+<li>DeepSeek 官方定价页：<a href="https://api-docs.deepseek.com/quick_start/pricing">api-docs.deepseek.com/quick_start/pricing</a>（模型名与旧别名、Base URL、上下文 1M、最大输出 384K、Token 价格、忙时定义）</li>
+<li>二手来源（已核验与官方一致的部分，官方公告未直接写明）：API 可在 Claude Code、GitHub Copilot、OpenCode 中免改代码接入（本文未实测）；权重 MIT 协议（以下载页许可证为准）；自托管推荐 context 1M、max_tokens 256K+</li>
+</ul>
+
+<hr>
+<p><strong>关注 X：</strong> <a href="https://x.com/LaomaiAI">https://x.com/LaomaiAI</a> · <strong>公众号：</strong> AI包工头老麦</p>
+<p><strong>AI包工头老麦，任务交给我包你满意。</strong></p>
+<p class="src"><strong>边界声明：</strong>本文为待独立审核的稿件，代码按官方文档整理，未经真实 API 调用实测。基准分均为厂商自测，非独立复现。本文不含任何实测收益、实测案例或“这是我的后台数据”类表述。</p>
+</body></html>
