@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>免费获取三 Agent 分工提示词模板：一个对话框顶一个团队，事半功倍 | AI包工头老麦</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:760px;margin:0 auto;padding:32px 20px;line-height:1.9;color:#1a1a1a}
+h1{font-size:26px;line-height:1.4}h2{font-size:21px;margin-top:36px;border-left:4px solid #f5b301;padding-left:12px}h3{font-size:18px;margin-top:28px}
+a{color:#0969da;text-decoration:none}a:hover{text-decoration:underline}
+.tag{color:#666;font-size:14px}
+.cta{border:2px solid #f5b301;border-radius:16px;padding:22px;margin:28px 0;background:#fffbe6}
+.cta h2{border:none;padding:0;margin:0 0 8px}
+.src{font-size:14px;color:#555}blockquote{border-left:3px solid #f5b301;margin:18px 0;padding-left:12px;color:#444;background:#fffbe6;border-radius:0 8px 8px 0}
+pre{background:#f6f8fa;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}code{font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#fffbe6}
+img{max-width:100%;border-radius:12px}li{margin:4px 0}
+</style></head>
+<body>
+<p><a href="../index.html">← 回首页</a></p>
+<h1>免费获取三 Agent 分工提示词模板：一个对话框顶一个团队，事半功倍</h1>
+<h2>结论先行</h2>
+<p>不用多开窗口，不用花 API 的钱，一个对话框就能跑完“规划、执行、审核”三个角色。</p>
+<p>做法：同一个模型，在一次对话里依次扮演三个角色。规划 Agent 先把任务拆成步骤、写清验收标准；执行 Agent 按步骤干活，每一步留证据；审核 Agent 对照验收标准挑毛病，不合格就打回重做。三个角色互相挑刺，一个人干活容易放过自己的问题，就不容易漏过去。</p>
+<p>本文给出的三角色提示词模板全文可直接复制使用，已整理成 Skill（待上传 GitHub），私信可取，丢给自己的 Agent 就能用。模板本身免费。在 DeepSeek 网页版对话框里跑不需要 API Key（智谱免费口径未核实）；走百炼 API 需要阿里云账号与 API Key。</p>
+<p><img alt="三角色接力流程" src="../assets/11-single-model-three-roles-1019/11-01-三角色接力流程.png" /></p>
+<h2>一、为什么单模型三角色够用</h2>
+<p>很多人一听多 Agent，第一反应是多开几个窗口、接好几个 API，最后账单先到，成果还没影。其实大多数日常任务不需要那种排场，问题出在流程，不在算力。</p>
+<p>一个人干活的典型翻车路径：目标模糊，干到一半发现方向偏了；数字随手写，事后找不到来源；自己检查自己的活，错误看三遍也看不出来。</p>
+<p>三角色分工把这三个坑分开堵。规划负责把目标写死，验收标准可检查；执行负责干活留证据，数字必须有来源；审核负责挑毛病，只对照标准说话，不复述执行结论。角色分开，错误才藏不住。</p>
+<h2>二、三角色各干什么</h2>
+<ul>
+<li>规划 Agent：只出计划，不执行。输出三样东西：步骤拆解（不超过 5 步）、每步验收标准（可检查）、证据要求（每步交付什么）。</li>
+<li>执行 Agent：按规划一步一步来。每步输出结果加证据。数字、“免费”说法必须有来源，写清页面 URL 与查看日期。没跑过的写“未实测”，不许写成跑过。遇到规划没覆盖的情况，停下写清问题，不擅自改规划。</li>
+<li>审核 Agent：与执行无关。手里拿着验收标准和执行结果，逐条对照。输出通过项、不通过项（每项写清证据）、修改意见。最后给结论：通过，或打回重做（写清重做哪几步）。</li>
+</ul>
+<p><img alt="模板结构" src="../assets/11-single-model-three-roles-1019/11-03-模板结构.png" /></p>
+<h2>三、提示词模板全文（直接复制使用）</h2>
+<p>三条提示词按顺序发在同一个对话框里，上一条出结果后，再发下一条。</p>
+<p>第 1 条，规划 Agent：</p>
+<pre><code>你现在是规划 Agent。任务：{用一句话写清任务}。
+只出计划，不执行任务。输出三部分：
+1) 步骤拆解：不超过 5 步，每步一句话。
+2) 每步的验收标准：必须可检查，不含“尽量”“大概”“差不多”这类词。
+3) 证据要求：每步交付什么文件 / 链接 / 截图，写清楚。
+计划末尾写：计划已出，等待执行指令。
+</code></pre>
+<p>第 2 条，执行 Agent：</p>
+<pre><code>你现在是执行 Agent。按上面规划的步骤执行。规则：
+1) 一步一步来，每步输出结果加证据。
+2) 每个数字、每个“免费”说法，必须有来源，来源写清页面 URL 与查看日期。没跑过的写“未实测”，不许写成跑过。
+3) 遇到规划没覆盖的情况，停下并写清问题，不擅自改规划。
+全部步骤完成后写：执行完毕，等待审核。
+</code></pre>
+<p>第 3 条，审核 Agent：</p>
+<pre><code>你现在是审核 Agent，与执行无关。你手里有规划的验收标准和执行的结果。逐条对照：
+1) 每步是否达标。
+2) 每个数字、“免费”说法是否有官方来源。
+3) 是否有编造、扩写、偷换概念。
+输出：通过项 / 不通过项（每项写清证据）/ 修改意见。
+最后给结论：通过，或打回重做（写清重做哪几步）。
+</code></pre>
+<p>审核打回时，只重做不通过的步骤，已通过步骤的证据保留。执行中卡住，回到第 1 条收窄任务范围，重新规划。</p>
+<h2>四、真实演示：用这套模板核查三家大模型的免费入口</h2>
+<p>演示任务：调研并核实国内主流大模型官方免费入口现状（DeepSeek 网页版、智谱 GLM、阿里百炼），输出带官方来源的核查简报。完整对话记录（含三条提示词原文、三轮输出原文、耗时）见《11-单模型三角色-演示任务完整对话记录.md》。演示在生产会话内按模板逐角色执行，未在 DeepSeek 网页版内粘贴运行，网页版复现指南见 Skill。</p>
+<p>演示结果：审核 Agent 抓出 4 个错误，打回重做第 1 步与第 3 步，第 2 步核查结果保留。</p>
+<ul>
+<li>错误 1：初稿把 DeepSeek“免费体验”写成“长期免费无限量”。官方原话只有“免费体验”，“无限量”是扩写。</li>
+<li>错误 2：初稿把智谱“未找到明确口径”写成“智谱网页版免费”。核查结果本身就是未找到，简报与核查结果自相矛盾。</li>
+<li>错误 3：初稿把百炼写成“免费对话”，并引用第三方营销文声称的赠送额度数字。官方价目表写的是“模型调用默认按量计费”，免费的是 API 额度，不是免费对话；第三方营销文不是官方来源。</li>
+<li>错误 4：初稿 claim 清单中“百炼免费，免费额度很高”，“很高”不可检查。</li>
+</ul>
+<p>修正版简报：DeepSeek 官网口径为“免费体验”；智谱网页版结论为“未核实”；百炼不是免费对话，是 API 平台，模型调用默认按量计费，部分模型在华北 2 地域有免费额度。</p>
+<p><img alt="三家免费口径对照" src="../assets/11-single-model-three-roles-1019/11-02-三家免费口径对照.png" /></p>
+<h2>五、免费口径核实表（核查日期 2026-10-19）</h2>
+<table>
+<thead>
+<tr>
+<th>一方</th>
+<th>核实结论</th>
+<th>官方来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepSeek</td>
+<td>官网口径为“免费体验”，不是“无限量”</td>
+<td><a href="https://www.deepseek.com/download/">https://www.deepseek.com/download/</a></td>
+</tr>
+<tr>
+<td>智谱 GLM 网页版</td>
+<td>官方页面文本中未确认明确免费口径（2026-10-19 复核抓取尝试超时，未取回页面文本），结论：未核实</td>
+<td><a href="https://chat.z.ai/">https://chat.z.ai/</a></td>
+</tr>
+<tr>
+<td>阿里百炼</td>
+<td>不是免费对话；API 平台，默认按量计费；部分模型华北 2 有免费额度</td>
+<td><a href="https://help.aliyun.com/zh/model-studio/model-pricing">https://help.aliyun.com/zh/model-studio/model-pricing</a></td>
+</tr>
+</tbody>
+</table>
+<p>注意两条禁令：某已作废的 DeepSeek 新号赠送额度说法，任何地方不许出现该说法或类似未经核实的赠送额度数字；阿里百炼的免费额度以官方价目表为准，第三方营销文一律不采信。</p>
+<h2>六、检查清单（执行前逐项打勾）</h2>
+<ul>
+<li>任务一句话写清了，没有“大概做一下”这类模糊表述</li>
+<li>规划不超过 5 步，每步有可检查的验收标准</li>
+<li>每个数字、“免费”说法都标了官方来源 URL 与查看日期</li>
+<li>没跑过的写了“未实测”，没有写成跑过</li>
+<li>审核角色与执行角色分离：审核没有直接复述执行结论，每项都对照了验收标准</li>
+<li>审核打回时，写清了重做哪几步，没有全盘推倒</li>
+<li>敏感数字逐个核对过官方页面，没有引用第三方营销文</li>
+</ul>
+<h2>七、常见翻车与回滚</h2>
+<p><img alt="失败回滚" src="../assets/11-single-model-three-roles-1019/11-04-失败回滚.png" /></p>
+<ul>
+<li>审核只写“看起来没问题，通过”：角色未分离。正确做法是逐条对照验收标准，每项写清证据。</li>
+<li>审核打回后全部重做：浪费。只重做不通过的步骤。</li>
+<li>执行时自己给自己“通过”：角色混了。重新发第 3 条审核提示词，并加一句：“你只做审核，不执行，不复述执行结论。”</li>
+<li>来源不可靠：把该条结论降级为“未核实”，保留核查过程记录，不删除、不掩盖。</li>
+<li>执行卡住：停下，写清卡在哪一步、缺什么信息，回到规划收窄范围，不硬编结果。</li>
+</ul>
+<h2>八、成本对比：为什么说“事半功倍”</h2>
+<p><img alt="成本对比示意" src="../assets/11-single-model-three-roles-1019/11-05-成本对比示意.png" /></p>
+<p>多 Agent 多窗口方案的成本在 API 调用量上，用多少算多少；单模型三角色方案在 DeepSeek 网页版对话框里跑，零 API 成本，不需要 API Key（智谱免费口径未核实；走百炼 API 需要阿里云账号与 API Key）。省下的不只是钱，还有来回切窗口、对账单的心智负担。图中为相对成本示意，非实测金额。</p>
+<h2>结尾</h2>
+<p>模板已经整理成 Skill（待上传 GitHub）。想要的话私信我拿一份，丢给自己的 Agent，下一项任务就能按这个流程跑起来。AI包工头老麦，任务交给我包你满意。</p>
+</body></html>
